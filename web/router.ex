@@ -10,7 +10,7 @@ defmodule DocsetApi.Router do
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug :accepts, ["xml"]
   end
 
   scope "/", DocsetApi do
@@ -19,8 +19,8 @@ defmodule DocsetApi.Router do
     get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", DocsetApi do
-  #   pipe_through :api
-  # end
+  scope "/feeds", DocsetApi do
+    pipe_through :api
+    get "/:package_name", FeedController, :show
+  end
 end

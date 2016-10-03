@@ -1,16 +1,20 @@
 defmodule DocsetApi.Builder do
   require Logger
   alias DocsetApi.FileParser
+  alias DocsetApi.Release
 
   @tmp_dir "/tmp/docsets"
 
-  def build(name) do
-    retrieve_release(name)
-    |> prepare_environment
-    |> download_and_extract_docs
-    |> build_plist
-    |> build_index
-    |> build_tarball
+  def build(name, destination) do
+    state =
+      retrieve_release(name, destination)
+      |> prepare_environment
+      |> download_and_extract_docs
+      |> build_plist
+      |> build_index
+      |> build_tarball(destination)
+
+    Map.fetch!(state, :release)
   end
 
   defp prepare_environment(release) do
@@ -18,8 +22,9 @@ defmodule DocsetApi.Builder do
     working_dir = "#{@tmp_dir}/#{release.name}"
     base_dir    = "#{working_dir}.docset"
     files_dir   = "#{base_dir}/Contents/Resources/Documents"
-    :ok = File.mkdir_p(files_dir)
-    :ok = File.mkdir_p(working_dir)
+    {:ok, _} = File.rm_rf(working_dir)
+    :ok      = File.mkdir_p(files_dir)
+    :ok      = File.mkdir_p(working_dir)
 
     %{
       working_dir: working_dir,
@@ -86,7 +91,6 @@ defmodule DocsetApi.Builder do
 
       # Create a callback which inserts the record into the DB
       index_fn = fn(name, type, path) ->
-        Logger.debug "Inserting #{type} index for #{name}"
         {:ok, _} = Sqlitex.query(db,
           "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('#{name}', '#{type}', '#{path}');"
         )
@@ -105,7 +109,7 @@ defmodule DocsetApi.Builder do
     state
   end
 
-  defp build_tarball(%{base_dir: base_dir, release: release, working_dir: working_dir}) do
+  defp build_tarball(state = %{base_dir: base_dir, release: release}, destination) do
     file_list =
       FileExt.ls_r(base_dir)
       |> Enum.map(fn(file) ->
@@ -116,26 +120,26 @@ defmodule DocsetApi.Builder do
 
     :ok = File.cd(@tmp_dir)
 
-    outfile = "#{working_dir}/#{release.name}.tgz"
+    Logger.debug("Writing tarball to #{destination}")
 
-    outfile
+    destination
     |> String.to_charlist
     |> :erl_tar.create(file_list, [:compressed])
 
-    outfile
+    state
   end
 
 
-  def retrieve_release(name) do
+  def retrieve_release(name, destination) do
     "https://hex.pm/api/packages/#{name}"
     |> HTTPoison.get
     |> case do
-      {:ok, response} -> get_latest_version(name, response)
+      {:ok, response} -> get_latest_version(name, destination, response)
       {:error, err}   -> return_error(err)
     end
   end
 
-  def get_latest_version(name, %HTTPoison.Response{body: json}) do
+  def get_latest_version(name, destination, %HTTPoison.Response{body: json}) do
     json
     |> Poison.decode!(as: %{"releases" => [%DocsetApi.Release{}]})
     |> Map.fetch!("releases")
@@ -145,6 +149,7 @@ defmodule DocsetApi.Builder do
     |> Map.fetch!(:body)
     |> Poison.decode!(as: %DocsetApi.Release{})
     |> Map.put(:name, name)
+    |> Map.put(:destination, destination)
   end
 
   def return_error(%HTTPoison.Error{reason: reason}) do

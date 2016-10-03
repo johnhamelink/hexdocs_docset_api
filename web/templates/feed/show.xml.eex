@@ -1,0 +1,4 @@
+<entry>
+    <version><%= @release.version %></version>
+    <url>http://<%= base_url %>:<%= port %>/docsets/<%= @release.name %>.tgz</url>
+</entry>

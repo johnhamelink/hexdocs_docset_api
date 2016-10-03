@@ -7,6 +7,7 @@ defmodule DocsetApi.Release do
     field :url, :string
     field :docs_url, :string
     field :has_docs, :boolean
+    field :destination, :string
     timestamps
   end
 

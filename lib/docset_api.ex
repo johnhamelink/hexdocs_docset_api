@@ -12,6 +12,7 @@ defmodule DocsetApi do
       supervisor(DocsetApi.Repo, []),
       # Start the endpoint when the application starts
       supervisor(DocsetApi.Endpoint, []),
+      supervisor(DocsetApi.BuilderServer, []),
       # Start your own worker by calling: DocsetApi.Worker.start_link(arg1, arg2, arg3)
       # worker(DocsetApi.Worker, [arg1, arg2, arg3]),
     ]
