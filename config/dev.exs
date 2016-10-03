@@ -9,7 +9,7 @@ use Mix.Config
 config :docset_api, DocsetApi.Endpoint,
   http: [port: 4000],
   debug_errors: true,
-  code_reloader: true,
+  code_reloader: false,
   check_origin: false,
   watchers: []
 
@@ -18,7 +18,7 @@ config :docset_api, DocsetApi.Endpoint,
 config :docset_api, DocsetApi.Endpoint,
   live_reload: [
     patterns: [
-      ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
+      ~r{priv/static/(?!docsets).*(js|css|png|jpeg|jpg|gif|svg)$},
       ~r{priv/gettext/.*(po)$},
       ~r{web/views/.*(ex)$},
       ~r{web/templates/.*(eex)$}
@@ -31,12 +31,3 @@ config :logger, :console, format: "[$level] $message\n"
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
 config :phoenix, :stacktrace_depth, 20
-
-# Configure your database
-config :docset_api, DocsetApi.Repo,
-  adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
-  database: "docset_api_dev",
-  hostname: "localhost",
-  pool_size: 10
