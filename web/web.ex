@@ -16,23 +16,11 @@ defmodule DocsetApi.Web do
   below.
   """
 
-  def model do
-    quote do
-      use Ecto.Schema
-
-      import Ecto
-      import Ecto.Changeset
-      import Ecto.Query
-    end
-  end
-
   def controller do
     quote do
       use Phoenix.Controller
 
       alias DocsetApi.Repo
-      import Ecto
-      import Ecto.Query
 
       import DocsetApi.Router.Helpers
       import DocsetApi.Gettext
@@ -66,8 +54,6 @@ defmodule DocsetApi.Web do
       use Phoenix.Channel
 
       alias DocsetApi.Repo
-      import Ecto
-      import Ecto.Query
       import DocsetApi.Gettext
     end
   end

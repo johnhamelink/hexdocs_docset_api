@@ -8,8 +8,6 @@ defmodule DocsetApi do
 
     # Define workers and child supervisors to be supervised
     children = [
-      # Start the Ecto repository
-      supervisor(DocsetApi.Repo, []),
       # Start the endpoint when the application starts
       supervisor(DocsetApi.Endpoint, []),
       supervisor(DocsetApi.BuilderServer, []),

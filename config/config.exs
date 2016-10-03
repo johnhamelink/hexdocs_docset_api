@@ -5,10 +5,6 @@
 # is restricted to this project.
 use Mix.Config
 
-# General application configuration
-config :docset_api,
-  ecto_repos: [DocsetApi.Repo]
-
 # Configures the endpoint
 config :docset_api, DocsetApi.Endpoint,
   url: [host: "localhost"],

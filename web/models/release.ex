@@ -1,14 +1,12 @@
 defmodule DocsetApi.Release do
-  use DocsetApi.Web, :model
 
-  schema "releases" do
-    field :name, :string
-    field :version, :string
-    field :url, :string
-    field :docs_url, :string
-    field :has_docs, :boolean
-    field :destination, :string
-    timestamps
-  end
+  defstruct name: nil,
+            version: nil,
+            url: nil,
+            docs_url: nil,
+            has_docs: nil,
+            destination: nil,
+            inserted_at: nil,
+            updated_at: nil
 
 end
