@@ -1,4 +1,4 @@
 <entry>
     <version><%= @release.version %></version>
-    <url>http://<%= base_url %>/docsets/<%= @release.name %>.tgz</url>
+    <url><%= base_url %>/docsets/<%= @release.name %>.tgz</url>
 </entry>
