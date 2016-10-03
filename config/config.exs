@@ -13,7 +13,7 @@ config :docset_api,
 config :docset_api, DocsetApi.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "V0huC+gn7HywVxfQwhRi3l7fB1tALe7Eubndpd4ePjgjPw5tYg9Pyhq1L86193zz",
-  render_errors: [view: DocsetApi.ErrorView, accepts: ~w(html json)],
+  render_errors: [view: DocsetApi.ErrorView, accepts: ~w(html json xml)],
   pubsub: [name: DocsetApi.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
