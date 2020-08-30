@@ -17,9 +17,19 @@ defmodule DocsetApi.Builder do
     Map.fetch!(state, :release)
   end
 
+  def retrieve_release(name, destination) do
+    "https://hex.pm/api/packages/#{name}"
+    |> HTTPoison.get()
+    |> case do
+      {:ok, response} -> get_latest_version(name, destination, response)
+      {:error, err} -> return_error(err)
+    end
+  end
+
   defp prepare_environment(release) do
     # 1. Create working dir "#{release.name}.docset"
-    working_dir = "#{@tmp_dir}/#{release.name}"
+    # working_dir = "#{@tmp_dir}/#{release.name}"
+    working_dir = "#{Path.dirname(release.destination) || @tmp_dir}/#{release.name}"
     base_dir = "#{working_dir}.docset"
     files_dir = "#{base_dir}/Contents/Resources/Documents"
     {:ok, _} = File.rm_rf(working_dir)
@@ -34,13 +44,34 @@ defmodule DocsetApi.Builder do
     }
   end
 
+  def get_latest_version(name, destination, %HTTPoison.Response{body: json}) do
+    json
+    |> Poison.decode!(as: %{"releases" => [%DocsetApi.Release{}]})
+    # |> IO.inspect()
+    |> Map.fetch!("releases")
+    |> List.first()
+    |> Map.fetch!(:url)
+    |> HTTPoison.get!()
+    |> Map.fetch!(:body)
+    |> Poison.decode!(as: %DocsetApi.Release{})
+    |> Map.put(:name, name)
+    |> Map.put(:destination, destination)
+    |> IO.inspect()
+  end
+
   defp download_and_extract_docs(
          state = %{working_dir: working_dir, release: release, files_dir: files_dir}
        ) do
-    docs_archive = "#{working_dir}/hexdocs.tar.gz"
-    Logger.debug("download_and_extract_docs: #{inspect(release)}")
+    url =
+      release.docs_url ||
+        "https://hex.pm/api/packages/#{release.name}/releases/#{release.version}/docs"
 
-    %HTTPoison.Response{body: doc} = HTTPoison.get!(release.docs_url || release.docs_html_url)
+    docs_archive = "#{working_dir}/hexdocs.tar.gz"
+
+    Logger.debug("download from #{url} to #{docs_archive} and extract to #{files_dir}")
+
+    %HTTPoison.Response{body: doc} = HTTPoison.get!(url, [], follow_redirect: true)
+
     File.write!(docs_archive, doc)
 
     :erl_tar.extract(
@@ -137,33 +168,9 @@ defmodule DocsetApi.Builder do
 
     destination
     |> String.to_charlist()
-    |> :erl_tar.create(file_list, [:compressed])
+    |> :erl_tar.create(file_list, [:compressed, :dereference, :verbose])
 
     state
-  end
-
-  def retrieve_release(name, destination) do
-    "https://hex.pm/api/packages/#{name}"
-    |> HTTPoison.get()
-    |> case do
-      {:ok, response} -> get_latest_version(name, destination, response)
-      {:error, err} -> return_error(err)
-    end
-  end
-
-  def get_latest_version(name, destination, %HTTPoison.Response{body: json}) do
-    json
-    |> Poison.decode!(as: %{"releases" => [%DocsetApi.Release{}]})
-    # |> IO.inspect()
-    |> Map.fetch!("releases")
-    |> List.first()
-    |> Map.fetch!(:url)
-    |> HTTPoison.get!()
-    |> Map.fetch!(:body)
-    |> Poison.decode!(as: %DocsetApi.Release{})
-    # |> IO.inspect()
-    |> Map.put(:name, name)
-    |> Map.put(:destination, destination)
   end
 
   def return_error(%HTTPoison.Error{reason: reason}) do
