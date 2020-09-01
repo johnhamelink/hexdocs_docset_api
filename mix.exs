@@ -50,7 +50,7 @@ defmodule DocsetApi.Mixfile do
       {:phoenix_html, "~> 2.14"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:gettext, "~> 0.18"},
-      {:plug_cowboy, "~> 1.0"},
+      {:plug_cowboy, "~> 2.2"},
       {:httpoison, "~> 0.13"},
       {:poison, "~> 2.2"},
       {:sqlitex, "~> 1.7"},
