@@ -45,17 +45,17 @@ defmodule DocsetApi.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.2.1"},
-      {:phoenix_pubsub, "~> 1.0"},
-      {:phoenix_html, "~> 2.6"},
-      {:phoenix_live_reload, "~> 1.0", only: :dev},
-      {:gettext, "~> 0.11"},
+      {:phoenix, "~> 1.5.4"},
+      {:phoenix_pubsub, "~> 2.0"},
+      {:phoenix_html, "~> 2.14"},
+      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:gettext, "~> 0.18"},
       {:plug_cowboy, "~> 1.0"},
-      {:httpoison, "~> 0.9"},
+      {:httpoison, "~> 0.13"},
       {:poison, "~> 2.2"},
-      {:sqlitex, "~> 1.0"},
+      {:sqlitex, "~> 1.7"},
       {:decimal, "1.2.0", override: true},
-      {:floki, "~> 0.10"}
+      {:floki, "~> 0.28"}
     ]
   end
 
