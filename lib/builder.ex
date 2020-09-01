@@ -3,16 +3,50 @@ defmodule DocsetApi.Builder do
   alias DocsetApi.FileParser
   alias DocsetApi.Release
 
+  @doc """
+  Build a docset from a hex library name
+  """
   def build(name, destination) do
-    state =
-      retrieve_release(name, destination)
-      |> prepare_environment(name)
-      |> download_and_extract_docs
-      |> build_plist
-      |> build_index
-      |> build_tarball(destination)
+    try do
+      state =
+        retrieve_release(name, destination)
+        |> prepare_environment(name)
+        |> download_and_extract_docs
+        |> build_plist
+        |> build_index
+        |> build_tarball(destination)
 
-    Map.fetch!(state, :release)
+      Map.fetch!(state, :release)
+    rescue
+      e ->
+        Logger.warn("Could not download and build docset for #{name}")
+        IO.inspect(e)
+        :ok
+    end
+  end
+
+  @doc """
+  Build a docset from a folder
+  """
+  def build(name, from_path, destination) do
+    try do
+      state =
+        %{}
+        |> Map.put(:name, name)
+        |> Map.put(:destination, destination)
+        |> prepare_environment(name, from_path)
+        |> copy_docs
+        |> build_plist
+        |> build_index
+        |> build_tarball(destination)
+
+      Map.fetch!(state, :release)
+    rescue
+      e ->
+        Logger.warn("Could not copy and build docset for #{name}")
+        IO.inspect(e)
+        :ok
+    end
   end
 
   def retrieve_release(name, destination) do
@@ -39,7 +73,7 @@ defmodule DocsetApi.Builder do
     |> IO.inspect()
   end
 
-  defp prepare_environment(release, name) do
+  defp prepare_environment(release, name, from_path \\ nil) do
     working_dir = "#{Path.dirname(release.destination)}"
     base_dir = "#{working_dir}/#{name}.docset"
     files_dir = "#{base_dir}/Contents/Resources/Documents"
@@ -57,6 +91,7 @@ defmodule DocsetApi.Builder do
       base_dir: base_dir,
       files_dir: files_dir,
       docs_archive: docs_archive,
+      from_path: from_path,
       release: release
     })
   end
@@ -87,6 +122,20 @@ defmodule DocsetApi.Builder do
     state
   end
 
+  defp copy_docs(
+         state = %{
+           from_path: from_path,
+           working_dir: working_dir,
+           files_dir: files_dir
+         }
+       ) do
+    Logger.debug("copy from #{from_path} to #{files_dir}")
+
+    File.cp_r(from_path, files_dir)
+
+    state
+  end
+
   defp build_plist(state = %{base_dir: base_dir, release: release}) do
     info_plist = """
     <?xml version="1.0" encoding="UTF-8"?>
@@ -110,13 +159,15 @@ defmodule DocsetApi.Builder do
 
     File.write!("#{base_dir}/Contents/Info.plist", info_plist)
 
+    version = Map.get(release, :version, 0)
+
     info_meta = """
     {
     "extra": {
       "isJavaScriptEnabled": true
     },
     "name": "#{release.name}",
-    "version": "#{release.version}",
+    "version": "#{version}",
     "title": "#{release.name}"
     }
     """
