@@ -4,7 +4,7 @@ defmodule DocsetApi.Mixfile do
   def project do
     [
       app: :docset_api,
-      version: "0.0.1",
+      version: "0.1.0",
       elixir: "~> 1.2",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix] ++ Mix.compilers(),
@@ -45,14 +45,11 @@ defmodule DocsetApi.Mixfile do
   defp deps do
     [
       {:phoenix, "~> 1.5.4"},
-      {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_html, "~> 2.14"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:plug_cowboy, "~> 2.2"},
       {:httpoison, "~> 1.5"},
       {:poison, "~> 2.2 or ~> 3.0 or ~> 4.0"},
       {:sqlitex, "~> 1.7"},
-      {:decimal, "~> 1.6"},
       {:floki, "~> 0.28"}
     ]
   end
