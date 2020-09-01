@@ -18,7 +18,6 @@ config :docset_api, DocsetApi.Endpoint,
   live_reload: [
     patterns: [
       ~r{priv/static/(?!docsets).*(js|css|png|jpeg|jpg|gif|svg)$},
-      ~r{priv/gettext/.*(po)$},
       ~r{web/views/.*(ex)$},
       ~r{web/templates/.*(eex)$}
     ]

@@ -7,7 +7,7 @@ defmodule DocsetApi.Mixfile do
       version: "0.0.1",
       elixir: "~> 1.2",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      compilers: [:phoenix] ++ Mix.compilers(),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -27,7 +27,6 @@ defmodule DocsetApi.Mixfile do
         :phoenix_html,
         :cowboy,
         :logger,
-        :gettext,
         :httpoison,
         :poison,
         :sqlitex,
@@ -49,7 +48,6 @@ defmodule DocsetApi.Mixfile do
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_html, "~> 2.14"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:gettext, "~> 0.18"},
       {:plug_cowboy, "~> 2.2"},
       {:httpoison, "~> 1.5"},
       {:poison, "~> 2.2 or ~> 3.0 or ~> 4.0"},
@@ -70,7 +68,7 @@ defmodule DocsetApi.Mixfile do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate", "test"],
-      start: ["phoenix.server"]
+      start: ["phx.server"]
     ]
   end
 end
