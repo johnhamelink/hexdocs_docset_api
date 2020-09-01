@@ -5,6 +5,7 @@ defmodule DocsetApi.BuilderServer do
   alias DocsetApi.Builder
 
   @name __MODULE__
+  @timeout 50000
 
   ## External API
 
@@ -14,17 +15,18 @@ defmodule DocsetApi.BuilderServer do
   end
 
   def update_package(pkg, destination),
-    do: GenServer.call(@name, {:build_package, pkg, destination}, 50000)
+    do: GenServer.call(@name, {:build_package, pkg, destination}, @timeout)
 
   def fetch_package(pkg, destination) do
-    case GenServer.call(@name, {:get_cached, pkg}) do
+    case GenServer.call(@name, {:get_cached, pkg}, @timeout) do
       {:ok, package} ->
         package
 
       :error ->
         GenServer.call(
           @name,
-          {:build_package, pkg, destination}
+          {:build_package, pkg, destination},
+          @timeout
         )
     end
   end

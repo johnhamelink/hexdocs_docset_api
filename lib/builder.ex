@@ -3,12 +3,10 @@ defmodule DocsetApi.Builder do
   alias DocsetApi.FileParser
   alias DocsetApi.Release
 
-  @tmp_dir "/tmp/docsets"
-
   def build(name, destination) do
     state =
       retrieve_release(name, destination)
-      |> prepare_environment
+      |> prepare_environment(name)
       |> download_and_extract_docs
       |> build_plist
       |> build_index
@@ -26,24 +24,6 @@ defmodule DocsetApi.Builder do
     end
   end
 
-  defp prepare_environment(release) do
-    # 1. Create working dir "#{release.name}.docset"
-    # working_dir = "#{@tmp_dir}/#{release.name}"
-    working_dir = "#{Path.dirname(release.destination) || @tmp_dir}/#{release.name}"
-    base_dir = "#{working_dir}.docset"
-    files_dir = "#{base_dir}/Contents/Resources/Documents"
-    {:ok, _} = File.rm_rf(working_dir)
-    :ok = File.mkdir_p(files_dir)
-    :ok = File.mkdir_p(working_dir)
-
-    %{
-      working_dir: working_dir,
-      base_dir: base_dir,
-      files_dir: files_dir,
-      release: release
-    }
-  end
-
   def get_latest_version(name, destination, %HTTPoison.Response{body: json}) do
     json
     |> Poison.decode!(as: %{"releases" => [%DocsetApi.Release{}]})
@@ -59,14 +39,39 @@ defmodule DocsetApi.Builder do
     |> IO.inspect()
   end
 
+  defp prepare_environment(release, name) do
+    working_dir = "#{Path.dirname(release.destination)}"
+    base_dir = "#{working_dir}/#{name}.docset"
+    files_dir = "#{base_dir}/Contents/Resources/Documents"
+    docs_archive = "#{working_dir}/#{name}_hexdocs.tar.gz"
+
+    Logger.debug("Create working dir #{release.name}.docset")
+    :ok = File.mkdir_p(working_dir)
+    {:ok, _} = File.rm_rf(base_dir)
+    {:ok, _} = File.rm_rf(docs_archive)
+    :ok = File.mkdir_p(base_dir)
+    :ok = File.mkdir_p(files_dir)
+
+    IO.inspect(%{
+      working_dir: working_dir,
+      base_dir: base_dir,
+      files_dir: files_dir,
+      docs_archive: docs_archive,
+      release: release
+    })
+  end
+
   defp download_and_extract_docs(
-         state = %{working_dir: working_dir, release: release, files_dir: files_dir}
+         state = %{
+           docs_archive: docs_archive,
+           working_dir: working_dir,
+           release: release,
+           files_dir: files_dir
+         }
        ) do
     url =
       release.docs_url ||
         "https://hex.pm/api/packages/#{release.name}/releases/#{release.version}/docs"
-
-    docs_archive = "#{working_dir}/hexdocs.tar.gz"
 
     Logger.debug("download from #{url} to #{docs_archive} and extract to #{files_dir}")
 
@@ -82,28 +87,41 @@ defmodule DocsetApi.Builder do
     state
   end
 
-  defp build_plist(state = %{base_dir: base_dir}) do
-    info_plist = ~S"""
+  defp build_plist(state = %{base_dir: base_dir, release: release}) do
+    info_plist = """
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
     <plist version="1.0">
-      <dict>
-        <key>CFBundleIdentifier</key>
-        <string>#{release.identifier |> String.downcase}</string>
+    <dict>
+    <key>CFBundleIdentifier</key>
+    <string>#{release.name |> String.downcase()}</string>
 
-        <key>CFBundleName</key>
-        <string>#{release.name}</string>
+    <key>CFBundleName</key>
+    <string>#{release.name}</string>
 
-        <key>DocSetPlatformFamily</key>
-        <string>#{release.platform_family}</string>
+    <key>DocSetPlatformFamily</key>
+    <string>elixir</string>
 
-        <key>isDashDocset</key>
-        <true/>
-      </dict>
+    <key>isDashDocset</key>
+    <true/>
+    </dict>
     </plist>
     """
 
     File.write!("#{base_dir}/Contents/Info.plist", info_plist)
+
+    info_meta = """
+    {
+    "extra": {
+      "isJavaScriptEnabled": true
+    },
+    "name": "#{release.name}",
+    "version": "#{release.version}",
+    "title": "#{release.name}"
+    }
+    """
+
+    File.write!("#{base_dir}/meta.json", info_meta)
 
     state
   end
@@ -153,22 +171,28 @@ defmodule DocsetApi.Builder do
     state
   end
 
-  defp build_tarball(state = %{base_dir: base_dir, release: release}, destination) do
+  defp build_tarball(
+         state = %{working_dir: working_dir, base_dir: base_dir, release: release},
+         destination
+       ) do
     file_list =
       FileExt.ls_r(base_dir)
       |> Enum.map(fn file ->
         file
-        |> Path.relative_to(@tmp_dir)
+        |> Path.relative_to(working_dir)
         |> String.to_charlist()
       end)
 
-    :ok = File.cd(@tmp_dir)
+    Logger.debug("cd to #{working_dir}")
+    :ok = File.cd(working_dir)
 
     Logger.debug("Writing tarball to #{destination}")
 
+    # IO.inspect(file_list)
+
     destination
     |> String.to_charlist()
-    |> :erl_tar.create(file_list, [:compressed, :dereference, :verbose])
+    |> :erl_tar.create(file_list, [:compressed, :verbose])
 
     state
   end

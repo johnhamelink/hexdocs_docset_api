@@ -24,13 +24,13 @@ defmodule DocsetApi.FileParser do
 
   defp parse_functions(html) do
     html
-    |> Floki.find("#functions.details-list > .detail")
+    |> Floki.find("#functions .detail")
     |> Floki.attribute("id")
   end
 
   defp parse_macros(html) do
     html
-    |> Floki.find("#macros.details-list > .detail")
+    |> Floki.find("#macros .detail")
     |> Floki.attribute("id")
   end
 
