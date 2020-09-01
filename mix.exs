@@ -54,7 +54,7 @@ defmodule DocsetApi.Mixfile do
       {:httpoison, "~> 0.13"},
       {:poison, "~> 2.2"},
       {:sqlitex, "~> 1.7"},
-      {:decimal, "1.2.0", override: true},
+      {:decimal, "~> 1.6"},
       {:floki, "~> 0.28"}
     ]
   end
