@@ -52,7 +52,7 @@ defmodule DocsetApi.Mixfile do
       {:gettext, "~> 0.18"},
       {:plug_cowboy, "~> 2.2"},
       {:httpoison, "~> 1.5"},
-      {:poison, "~> 2.2"},
+      {:poison, "~> 2.2 or ~> 3.0 or ~> 4.0"},
       {:sqlitex, "~> 1.7"},
       {:decimal, "~> 1.6"},
       {:floki, "~> 0.28"}
