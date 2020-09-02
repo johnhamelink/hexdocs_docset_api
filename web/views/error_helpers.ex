@@ -10,7 +10,7 @@ defmodule DocsetApi.ErrorHelpers do
   """
   def error_tag(form, field) do
     if error = form.errors[field] do
-      content_tag :span, translate_error(error), class: "help-block"
+      content_tag(:span, translate_error(error), class: "help-block")
     end
   end
 
@@ -32,9 +32,9 @@ defmodule DocsetApi.ErrorHelpers do
     #     dgettext "errors", "is invalid"
     #
     if count = opts[:count] do
-      Gettext.dngettext(DocsetApi.Gettext, "errors", msg, msg, count, opts)
+      "#{count} #{msg}"
     else
-      Gettext.dgettext(DocsetApi.Gettext, "errors", msg, opts)
+      msg
     end
   end
 end

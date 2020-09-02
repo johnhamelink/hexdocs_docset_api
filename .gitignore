@@ -15,3 +15,5 @@ erl_crash.dump
 # variables.
 /config/prod.secret.exs
 priv/static/docsets/*.tgz
+priv/static/docsets/*/*
+priv/static/docsets/*.tar.gz

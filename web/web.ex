@@ -23,7 +23,6 @@ defmodule DocsetApi.Web do
       alias DocsetApi.Repo
 
       import DocsetApi.Router.Helpers
-      import DocsetApi.Gettext
     end
   end
 
@@ -39,7 +38,6 @@ defmodule DocsetApi.Web do
 
       import DocsetApi.Router.Helpers
       import DocsetApi.ErrorHelpers
-      import DocsetApi.Gettext
     end
   end
 
@@ -54,7 +52,6 @@ defmodule DocsetApi.Web do
       use Phoenix.Channel
 
       alias DocsetApi.Repo
-      import DocsetApi.Gettext
     end
   end
 

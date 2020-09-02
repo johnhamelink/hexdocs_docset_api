@@ -5,24 +5,29 @@ defmodule DocsetApi.BuilderServer do
   alias DocsetApi.Builder
 
   @name __MODULE__
+  @timeout 50000
 
   ## External API
 
   def start_link do
-    Logger.info "Starting BuilderServer"
+    Logger.info("Starting BuilderServer")
     GenServer.start_link(@name, %{}, name: @name)
   end
 
   def update_package(pkg, destination),
-    do: GenServer.call(@name, {:build_package, pkg, destination})
+    do: GenServer.call(@name, {:build_package, pkg, destination}, @timeout)
 
   def fetch_package(pkg, destination) do
-    case GenServer.call(@name, {:get_cached, pkg}) do
-      {:ok, package} -> package
-      :error         ->
+    case GenServer.call(@name, {:get_cached, pkg}, @timeout) do
+      {:ok, package} ->
+        package
+
+      :error ->
         GenServer.call(
           @name,
-          {:build_package, pkg, destination})
+          {:build_package, pkg, destination},
+          @timeout
+        )
     end
   end
 
@@ -34,7 +39,7 @@ defmodule DocsetApi.BuilderServer do
   end
 
   defp tomorrow do
-   1000 * 60 * 60 * 24
+    1000 * 60 * 60 * 24
   end
 
   def handle_call({:build_package, pkg_name, destination}, _from, packages) do
@@ -48,9 +53,10 @@ defmodule DocsetApi.BuilderServer do
 
   def handle_info(:update_packages, packages) do
     await_timeout_ms = 1000 * 10
+
     packages
-    |> Enum.map(fn({pkg, release}) ->
-      Task.async(fn() ->
+    |> Enum.map(fn {pkg, release} ->
+      Task.async(fn ->
         Builder.build(pkg, release.destination)
       end)
     end)

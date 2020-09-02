@@ -1,19 +1,69 @@
 # DocsetApi
 
-To start your Phoenix app:
+An API that produces docset packages (for https://zealdocs.org & dash.app) from any Elixir app or library with hexdocs documentation. 
 
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
-  * Start Phoenix endpoint with `mix phoenix.server`
+You can generate a docset for a library which will be pulled from hex.pm/hexdocs:
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+`iex> DocsetApi.Builder.build("phoenix", "priv/static/docsets")`
 
-Ready to run in production? Please [check our deployment guides](http://www.phoenixframework.org/docs/deployment).
+Or you can go further and generate docsets for your own Elixir application + all of its dependencies at once. 
 
-## Learn more
+Add DocsetApi as a dependecy in `mix.exs`:
 
-  * Official website: http://www.phoenixframework.org/
-  * Guides: http://phoenixframework.org/docs/overview
-  * Docs: https://hexdocs.pm/phoenix
-  * Mailing list: http://groups.google.com/group/phoenix-talk
-  * Source: https://github.com/phoenixframework/phoenix
+`{:docset_api, only: :dev, runtime: false, git: "https://github.com/mayel/hexdocs_docset_api.git"}`
+
+Put a mix task like this one in your app:
+
+```elixir
+defmodule Mix.Tasks.MyApp.GenerateDocsets do
+  use Mix.Task
+
+  @usage "mix my_app.generate_docsets PATH"
+
+  @shortdoc "Generate Dash-compatible docsets for the app and dependencies."
+  @moduledoc """
+
+  Usage:
+
+    $ #{@usage}
+  """
+
+  def run([path | _]) when is_binary(path) do
+    Mix.Task.run("docs")
+    Mix.Task.run("app.start")
+
+    # generate a docset for this codebase
+    DocsetApi.Builder.build("MyApp", "docs/exdoc", path)
+
+    # generate docsets for every dependency
+    configured_deps = Enum.map(MoodleNet.Mixfile.deps(), &dep_process(&1, path))
+
+  end
+
+  defp dep_process(dep, path) do
+    lib = elem(dep, 0)
+
+    DocsetApi.Builder.build(Atom.to_string(lib), path)
+
+  end
+
+  def run(_args),
+    do:
+      Mix.shell().error("""
+      Invalid parameters.
+
+      Usage:
+
+        #{@usage}
+      """)
+end
+```
+
+Then run the task `mix moodle_net.generate_docsets /home/myuser/.local/share/Zeal/Zeal/docsets/` with your desired output directory. 
+
+Voila!
+
+![Screenshot](https://i.imgur.com/hBfzXoO.png)
+
+
+Note: This app can also serve docset feeds over HTTP, but those aren't currently being recognised properly (at least not by Zeal).
