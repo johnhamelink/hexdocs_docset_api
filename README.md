@@ -2,6 +2,16 @@
 
 An API that produces docset packages (for https://zealdocs.org & dash.app) from any Elixir app or library with hexdocs documentation. 
 
+## Feed API
+
+1. Start the server with `mix phx.start`
+2. In Zeal, go to tools -> docsets -> Installed -> Add Feed
+3. Insert the url in the format, `http://localhost:8080/feeds/<package_name>`
+
+Done!
+
+## CLI
+
 You can generate a docset for a library which will be pulled from hex.pm/hexdocs:
 
 `iex> DocsetApi.Builder.build("phoenix", "priv/static/docsets")`
@@ -64,6 +74,3 @@ Then run the task `mix moodle_net.generate_docsets /home/myuser/.local/share/Zea
 Voila!
 
 ![Screenshot](https://i.imgur.com/hBfzXoO.png)
-
-
-Note: This app can also serve docset feeds over HTTP, but those aren't currently being recognised properly (at least not by Zeal).
