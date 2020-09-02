@@ -34,7 +34,7 @@ defmodule DocsetApi.BuilderServer do
   ## Internal API
 
   def init(init) when is_map(init) do
-    Process.send_after(self(), :update_packages, tomorrow)
+    Process.send_after(self(), :update_packages, tomorrow())
     {:ok, init}
   end
 
@@ -62,7 +62,7 @@ defmodule DocsetApi.BuilderServer do
     end)
     |> Enum.each(&Task.await(&1, await_timeout_ms))
 
-    Process.send_after(self(), :update_packages, tomorrow)
+    Process.send_after(self(), :update_packages, tomorrow())
     {:noreply, packages}
   end
 end

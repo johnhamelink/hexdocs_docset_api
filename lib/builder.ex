@@ -1,7 +1,6 @@
 defmodule DocsetApi.Builder do
   require Logger
   alias DocsetApi.FileParser
-  alias DocsetApi.Release
 
   @doc """
   Build a docset from a hex library name
@@ -99,7 +98,6 @@ defmodule DocsetApi.Builder do
   defp download_and_extract_docs(
          state = %{
            docs_archive: docs_archive,
-           working_dir: working_dir,
            release: release,
            files_dir: files_dir
          }
@@ -125,7 +123,6 @@ defmodule DocsetApi.Builder do
   defp copy_docs(
          state = %{
            from_path: from_path,
-           working_dir: working_dir,
            files_dir: files_dir
          }
        ) do
@@ -223,7 +220,7 @@ defmodule DocsetApi.Builder do
   end
 
   defp build_tarball(
-         state = %{working_dir: working_dir, base_dir: base_dir, release: release},
+         state = %{working_dir: working_dir, base_dir: base_dir},
          destination
        ) do
     file_list =
