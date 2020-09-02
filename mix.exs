@@ -5,7 +5,7 @@ defmodule DocsetApi.Mixfile do
     [
       app: :docset_api,
       version: "0.1.0",
-      elixir: "~> 1.2",
+      elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix] ++ Mix.compilers(),
       build_embedded: Mix.env() == :prod,
@@ -44,10 +44,10 @@ defmodule DocsetApi.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.5.4"},
+      {:phoenix, "~> 1.5"},
       {:phoenix_html, "~> 2.14"},
-      {:plug_cowboy, "~> 2.2"},
-      {:httpoison, "~> 1.5"},
+      {:plug_cowboy, "~> 2.3"},
+      {:httpoison, "~> 1.7"},
       {:poison, "~> 2.2 or ~> 3.0 or ~> 4.0"},
       {:sqlitex, "~> 1.7"},
       {:floki, "~> 0.28"}
