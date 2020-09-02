@@ -219,29 +219,9 @@ defmodule DocsetApi.Builder do
     state
   end
 
-  defp build_tarball(
-         state = %{working_dir: working_dir, base_dir: base_dir},
-         destination
-       ) do
-    file_list =
-      FileExt.ls_r(base_dir)
-      |> Enum.map(fn file ->
-        file
-        |> Path.relative_to(working_dir)
-        |> String.to_charlist()
-      end)
-
-    Logger.debug("cd to #{working_dir}")
-    :ok = File.cd(working_dir)
-
+  defp build_tarball(state = %{base_dir: base_dir}, destination) do
     Logger.debug("Writing tarball to #{destination}")
-
-    # IO.inspect(file_list)
-
-    destination
-    |> String.to_charlist()
-    |> :erl_tar.create(file_list, [:compressed, :verbose])
-
+    System.cmd("tar", ["-czvf", destination, "."], cd: base_dir, into: IO.stream(:stdio, :line))
     state
   end
 
