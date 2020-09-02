@@ -1,7 +1,9 @@
 defmodule DocsetApi.Endpoint do
   use Phoenix.Endpoint, otp_app: :docset_api
 
-  socket "/socket", DocsetApi.UserSocket
+  socket "/socket", DocsetApi.UserSocket,
+    websocket: true,
+    longpoll: false
 
   # Serve at "/" the static files from "priv/static" directory.
   #
