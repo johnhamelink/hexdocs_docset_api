@@ -148,6 +148,9 @@ defmodule DocsetApi.Builder do
     <key>DocSetPlatformFamily</key>
     <string>elixir</string>
 
+    <key>isJavaScriptEnabled</key>
+    <true/>
+
     <key>isDashDocset</key>
     <true/>
     </dict>
