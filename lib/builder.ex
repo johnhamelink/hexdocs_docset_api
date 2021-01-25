@@ -153,6 +153,9 @@ defmodule DocsetApi.Builder do
 
     <key>isDashDocset</key>
     <true/>
+
+    <key>DashDocSetPluginKeyword</key>
+    <string>#{release.name}</string>
     </dict>
     </plist>
     """
