@@ -12,6 +12,7 @@ defmodule DocsetApi.Builder do
         |> prepare_environment(name)
         |> download_and_extract_docs
         |> build_plist
+        |> copy_logo
         |> build_index
         |> build_tarball(destination)
 
@@ -148,8 +149,14 @@ defmodule DocsetApi.Builder do
     <key>DocSetPlatformFamily</key>
     <string>elixir</string>
 
+    <key>isJavaScriptEnabled</key>
+    <true/>
+
     <key>isDashDocset</key>
     <true/>
+
+    <key>DashDocSetPluginKeyword</key>
+    <string>#{release.name}</string>
     </dict>
     </plist>
     """
@@ -172,6 +179,24 @@ defmodule DocsetApi.Builder do
     File.write!("#{base_dir}/meta.json", info_meta)
 
     state
+  end
+
+  defp copy_logo(state = %{base_dir: base_dir, files_dir: files_dir}) do
+    files_dir
+    |> find_logo()
+    |> File.cp(Path.join(base_dir, "icon.png"))
+
+    state
+  end
+
+  defp find_logo(files_dir) do
+    package_logo_file = Path.join([files_dir, "assets", "logo.png"])
+
+    if File.exists?(package_logo_file) do
+      package_logo_file
+    else
+      Path.join([Application.app_dir(:docset_api), "priv", "static", "images", "hexpm.png"])
+    end
   end
 
   def build_index(state = %{base_dir: base_dir, files_dir: files_dir}) do
