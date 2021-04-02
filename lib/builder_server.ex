@@ -9,7 +9,7 @@ defmodule DocsetApi.BuilderServer do
 
   ## External API
 
-  def start_link do
+  def start_link(_opts) do
     Logger.info("Starting BuilderServer")
     GenServer.start_link(@name, %{}, name: @name)
   end
