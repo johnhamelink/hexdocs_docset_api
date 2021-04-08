@@ -4,13 +4,11 @@ defmodule DocsetApi do
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
   def start(_type, _args) do
-    import Supervisor.Spec
-
     # Define workers and child supervisors to be supervised
     children = [
       # Start the endpoint when the application starts
-      supervisor(DocsetApi.Endpoint, []),
-      supervisor(DocsetApi.BuilderServer, []),
+      DocsetApi.Endpoint,
+      DocsetApi.BuilderServer,
       {Phoenix.PubSub, [name: DocsetApi.PubSub, adapter: Phoenix.PubSub.PG2]}
       # Start your own worker by calling: DocsetApi.Worker.start_link(arg1, arg2, arg3)
       # worker(DocsetApi.Worker, [arg1, arg2, arg3]),
