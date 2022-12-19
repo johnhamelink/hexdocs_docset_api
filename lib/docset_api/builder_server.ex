@@ -5,7 +5,7 @@ defmodule DocsetApi.BuilderServer do
   alias DocsetApi.Builder
 
   @name __MODULE__
-  @timeout 50000
+  @timeout 50_000
 
   ## External API
 

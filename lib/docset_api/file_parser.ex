@@ -16,10 +16,9 @@ defmodule DocsetApi.FileParser do
       |> Floki.text()
       |> String.trim()
     end)
-    |> Enum.reject(&(&1 =~ " "))
-
     # Reject all headers with spaces
     # in them - they're not modules
+    |> Enum.reject(&(&1 =~ " "))
   end
 
   defp parse_functions(html) do

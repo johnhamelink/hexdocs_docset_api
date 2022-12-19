@@ -3,10 +3,8 @@ defmodule DocsetApi.FeedController do
   alias DocsetApi.BuilderServer
 
   def show(conn, %{"package_name" => package}) do
-    release =
-      BuilderServer.fetch_package(
-        package,
-        Path.absname("priv/static/docsets/#{package}.tgz"))
+    path =Path.absname("priv/static/docsets/#{package}.tgz")
+    release = BuilderServer.fetch_package(package, path)
 
     render conn, "show.xml", release: release
   end
