@@ -9,9 +9,9 @@ packages.mixRelease rec {
 
   src = pkgs.fetchFromGitHub {
     owner = "hissssst";
-    rev = "4d2b257f8a7f3af814de78eb4c39a39114f721b8";
+    rev = "f8e422539a1dc3348c26dd73a17595ee9f6e2852";
     repo = "${pname}";
-    sha256 = "sha256-RnrOlwy47sWokBJNWeT4uDLZn4802ycGoRaV2wcEcuI=";
+    sha256 = "sha256-3ffjieIzLEu6726PxAyP7Q3+oYh5+LZzSK09wIYiH/c=";
   };
 
   mixNixDeps = with pkgs; import ./mix.nix { inherit lib beamPackages; };

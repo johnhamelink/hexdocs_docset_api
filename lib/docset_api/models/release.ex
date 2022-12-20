@@ -1,6 +1,6 @@
 defmodule DocsetApi.Release do
   defstruct name: nil,
-            version: nil,
+            version: 0,
             url: nil,
             docs_url: nil,
             docs_html_url: nil,
