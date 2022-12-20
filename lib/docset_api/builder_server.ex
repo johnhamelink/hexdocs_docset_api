@@ -4,27 +4,26 @@ defmodule DocsetApi.BuilderServer do
   require Logger
   alias DocsetApi.Builder
 
-  @name __MODULE__
   @timeout 50_000
 
   ## External API
 
   def start_link(_opts) do
     Logger.info("Starting BuilderServer")
-    GenServer.start_link(@name, %{}, name: @name)
+    GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
 
   def update_package(pkg, destination),
-    do: GenServer.call(@name, {:build_package, pkg, destination}, @timeout)
+    do: GenServer.call(__MODULE__, {:build_package, pkg, destination}, @timeout)
 
   def fetch_package(pkg, destination) do
-    case GenServer.call(@name, {:get_cached, pkg}, @timeout) do
+    case GenServer.call(__MODULE__, {:get_cached, pkg}, @timeout) do
       {:ok, package} ->
         package
 
       :error ->
         GenServer.call(
-          @name,
+          __MODULE__,
           {:build_package, pkg, destination},
           @timeout
         )

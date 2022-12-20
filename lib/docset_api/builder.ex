@@ -6,47 +6,30 @@ defmodule DocsetApi.Builder do
   Build a docset from a hex library name
   """
   def build(name, destination) do
-    try do
-      state =
-        retrieve_release(name, destination)
-        |> prepare_environment(name)
-        |> download_and_extract_docs
-        |> build_plist
-        |> copy_logo
-        |> build_index
-        |> build_tarball(destination)
-
-      Map.fetch!(state, :release)
-    rescue
-      e ->
-        Logger.warn("Could not download and build docset for #{name}")
-        IO.inspect(e)
-        :ok
-    end
+    name
+    |> retrieve_release(destination)
+    |> prepare_environment(name)
+    |> download_and_extract_docs()
+    |> build_plist()
+    |> copy_logo()
+    |> build_index()
+    |> build_tarball(destination)
+    |> Map.fetch!(:release)
   end
 
   @doc """
   Build a docset from a folder
   """
   def build(name, from_path, destination) do
-    try do
-      state =
-        %{}
-        |> Map.put(:name, name)
-        |> Map.put(:destination, destination)
-        |> prepare_environment(name, from_path)
-        |> copy_docs
-        |> build_plist
-        |> build_index
-        |> build_tarball(destination)
-
-      Map.fetch!(state, :release)
-    rescue
-      e ->
-        Logger.warn("Could not copy and build docset for #{name}")
-        IO.inspect(e)
-        :ok
-    end
+    %{}
+    |> Map.put(:name, name)
+    |> Map.put(:destination, destination)
+    |> prepare_environment(name, from_path)
+    |> copy_docs()
+    |> build_plist()
+    |> build_index()
+    |> build_tarball(destination)
+    |> Map.fetch!(:release)
   end
 
   def retrieve_release(name, destination) do
@@ -61,7 +44,6 @@ defmodule DocsetApi.Builder do
   def get_latest_version(name, destination, %HTTPoison.Response{body: json}) do
     json
     |> Poison.decode!(as: %{"releases" => [%DocsetApi.Release{}]})
-    # |> IO.inspect()
     |> Map.fetch!("releases")
     |> List.first()
     |> Map.fetch!(:url)
@@ -70,7 +52,6 @@ defmodule DocsetApi.Builder do
     |> Poison.decode!(as: %DocsetApi.Release{})
     |> Map.put(:name, name)
     |> Map.put(:destination, destination)
-    |> IO.inspect()
   end
 
   defp prepare_environment(release, name, from_path \\ nil) do
@@ -86,14 +67,14 @@ defmodule DocsetApi.Builder do
     :ok = File.mkdir_p(base_dir)
     :ok = File.mkdir_p(files_dir)
 
-    IO.inspect(%{
+    %{
       working_dir: working_dir,
       base_dir: base_dir,
       files_dir: files_dir,
       docs_archive: docs_archive,
       from_path: from_path,
       release: release
-    })
+    }
   end
 
   defp download_and_extract_docs(
@@ -251,6 +232,6 @@ defmodule DocsetApi.Builder do
   end
 
   def return_error(%HTTPoison.Error{reason: reason}) do
-    IO.inspect(reason)
+    Logger.error inspect reason, pretty: true
   end
 end
