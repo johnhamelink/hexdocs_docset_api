@@ -93,7 +93,7 @@ defmodule DocsetApi.Builder do
 
     File.write!(docs_archive, doc)
 
-    IO.inspect :erl_tar.extract(docs_archive, [:compressed, cwd: files_dir])
+    :erl_tar.extract(docs_archive, [:compressed, cwd: files_dir])
     state
   end
 
@@ -190,9 +190,6 @@ defmodule DocsetApi.Builder do
       # For each file, parse it for the right keywords and run the callback # against the result.
       Enum.each(files, fn file ->
         FileParser.parse_file(file, files_dir, fn name, type, path ->
-          IO.inspect(name, label: name)
-          IO.inspect(type, label: type)
-          IO.inspect(path, label: path)
           query = "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('#{name}', '#{type}', '#{path}');"
           {:ok, _} = Sqlitex.query(db, query)
         end)

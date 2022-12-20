@@ -10,7 +10,7 @@ defmodule DocsetApi.FileParser do
 
         module = parse_module(html)
 
-        unless module =~ " " do
+        unless module =~ " " and module != "" do
           callback.(module, "Module", "#{relative_file}#content")
 
           for function <- parse_functions(html) do
