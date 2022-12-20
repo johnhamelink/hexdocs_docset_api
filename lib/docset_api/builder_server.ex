@@ -13,20 +13,18 @@ defmodule DocsetApi.BuilderServer do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
 
-  def update_package(pkg, destination),
-    do: GenServer.call(__MODULE__, {:build_package, pkg, destination}, @timeout)
+  defp call(message) do
+    GenServer.call(__MODULE__, message, @timeout)
+  end
+
+  def update_package(pkg, destination) do
+    call {:build_package, pkg, destination}
+  end
 
   def fetch_package(pkg, destination) do
-    case GenServer.call(__MODULE__, {:get_cached, pkg}, @timeout) do
-      {:ok, package} ->
-        package
-
-      :error ->
-        GenServer.call(
-          __MODULE__,
-          {:build_package, pkg, destination},
-          @timeout
-        )
+    case call {:get_cached, pkg} do
+      {:ok, package} -> package
+      :error -> call {:build_package, pkg, destination}
     end
   end
 
@@ -38,7 +36,7 @@ defmodule DocsetApi.BuilderServer do
   end
 
   defp tomorrow do
-    1000 * 60 * 60 * 24
+    :timer.hours 24
   end
 
   def handle_call({:build_package, pkg_name, destination}, _from, packages) do
@@ -51,15 +49,9 @@ defmodule DocsetApi.BuilderServer do
   end
 
   def handle_info(:update_packages, packages) do
-    await_timeout_ms = 1000 * 10
-
     packages
-    |> Enum.map(fn {pkg, release} ->
-      Task.async(fn ->
-        Builder.build(pkg, release.destination)
-      end)
-    end)
-    |> Enum.each(&Task.await(&1, await_timeout_ms))
+    |> Task.async_stream(fn {pkg, release} -> Builder.build(pkg, release.destination) end)
+    |> Stream.run()
 
     Process.send_after(self(), :update_packages, tomorrow())
     {:noreply, packages}

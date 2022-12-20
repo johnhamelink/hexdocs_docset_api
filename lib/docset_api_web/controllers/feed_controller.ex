@@ -1,14 +1,15 @@
 defmodule DocsetApi.FeedController do
   use DocsetApi.Web, :controller
   alias DocsetApi.BuilderServer
-
   def show(conn, %{"package_name" => package}) do
-    dir = Application.get_env(:docset_api, :docset_dir, "/tmp/hexdocs_docset_api")
+    package = String.trim_trailing(package, ".tgz")
+
 
     path =
       Path.absname Path.join [
-        dir,
-        "static/docsets",
+        DocsetApi.docset_dir(),
+        "static",
+        "docsets",
         "#{package}.tgz",
       ]
 

@@ -7,7 +7,13 @@ defmodule DocsetApi.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/", from: :docset_api, gzip: false,
-    only: ~w(docsets css fonts images js favicon.ico robots.txt)
+    only: ~w(css fonts images js favicon.ico robots.txt)
+
+  docset_dir = DocsetApi.docset_dir()
+
+  plug Plug.Static,
+    at: "/", gzip: false, from: Path.join(docset_dir, "static"),
+    only: [ "docsets" ]
 
   plug Plug.Logger
 

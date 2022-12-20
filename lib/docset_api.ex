@@ -26,4 +26,9 @@ defmodule DocsetApi do
     DocsetApi.Endpoint.config_change(changed, removed)
     :ok
   end
+
+  def docset_dir do
+    tmp = Path.join System.tmp_dir!(), "hexdocs_docset_api"
+    Application.get_env(:docset_api, :docset_dir, tmp)
+  end
 end

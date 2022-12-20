@@ -1,4 +1,6 @@
 defmodule DocsetApi.Release do
+  # A structure for a Hex release with documentation
+
   defstruct name: nil,
             version: 0,
             url: nil,

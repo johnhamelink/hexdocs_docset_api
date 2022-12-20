@@ -9,4 +9,9 @@ defmodule DocsetApi.Router do
     pipe_through :api
     get "/:package_name", FeedController, :show
   end
+
+  scope "/docsets/", DocsetApi do
+    pipe_through :api
+    get "/:package_name", FeedController, :show
+  end
 end

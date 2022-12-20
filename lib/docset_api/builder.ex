@@ -22,9 +22,10 @@ defmodule DocsetApi.Builder do
   Build a docset from a folder
   """
   def build(name, from_path, destination) do
-    %{}
-    |> Map.put(:name, name)
-    |> Map.put(:destination, destination)
+    %Release{
+      name: name,
+      destination: destination
+    }
     |> prepare_environment(name, from_path)
     |> copy_docs()
     |> build_plist()
@@ -92,7 +93,7 @@ defmodule DocsetApi.Builder do
 
     File.write!(docs_archive, doc)
 
-    :erl_tar.extract(docs_archive, [:compressed, cwd: files_dir])
+    IO.inspect :erl_tar.extract(docs_archive, [:compressed, cwd: files_dir])
     state
   end
 
@@ -184,11 +185,14 @@ defmodule DocsetApi.Builder do
       Sqlitex.query(db, "CREATE UNIQUE INDEX anchor ON searchIndex (name, type, path)")
 
       # Deep-search for files
-      files = FileExt.ls_r(files_dir)
+      files = ls_r(files_dir)
 
       # For each file, parse it for the right keywords and run the callback # against the result.
       Enum.each(files, fn file ->
         FileParser.parse_file(file, files_dir, fn name, type, path ->
+          IO.inspect(name, label: name)
+          IO.inspect(type, label: type)
+          IO.inspect(path, label: path)
           query = "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('#{name}', '#{type}', '#{path}');"
           {:ok, _} = Sqlitex.query(db, query)
         end)
@@ -206,5 +210,20 @@ defmodule DocsetApi.Builder do
 
   def return_error(%HTTPoison.Error{reason: reason}) do
     Logger.error inspect reason, pretty: true
+  end
+
+  defp ls_r(path) do
+    cond do
+      File.regular?(path) ->
+        [path]
+
+      File.dir?(path) ->
+        path
+        |> File.ls!()
+        |> Enum.flat_map(& ls_r Path.join(path, &1))
+
+      true ->
+        []
+    end
   end
 end
