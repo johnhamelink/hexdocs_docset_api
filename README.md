@@ -1,5 +1,11 @@
 # DocsetApi
 
+## **DocsetApi HAS MOVED**
+
+DocsetApi is now being maintained over at https://github.com/hissssst/hexdocs_docset_api/
+
+---
+
 An API that produces docset packages (for https://zealdocs.org & dash.app) from any Elixir app or library with hexdocs documentation. 
 
 ## Feed API
