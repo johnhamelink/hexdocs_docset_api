@@ -10,7 +10,7 @@ An API that produces docset packages (for https://zealdocs.org & dash.app) from 
 
 ## Feed API
 
-1. Start the server with `mix phx.start`
+1. Start the server with `PORT=8080 mix phx.server` (or whatever port is available on your machine)
 2. In Zeal, go to tools -> docsets -> Installed -> Add Feed
 3. Insert the url in the format, `http://localhost:8080/feeds/<package_name>`
 
