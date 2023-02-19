@@ -56,11 +56,15 @@ defmodule DocsetApi.Builder do
     |> Map.replace!(:destination, destination)
   end
 
-  defp prepare_environment(%Release{name: release_name, destination: dest} = release, name, from_path \\ nil) do
-    working_dir  = Path.dirname dest
-    base_dir     = Path.join [working_dir, "#{name}.docset"]
-    files_dir    = Path.join [base_dir, "Contents", "Resources", "Documents"]
-    docs_archive = Path.join [working_dir, "#{name}_hexdocs.tar.gz"]
+  defp prepare_environment(
+         %Release{name: release_name, destination: dest} = release,
+         name,
+         from_path \\ nil
+       ) do
+    working_dir = Path.dirname(dest)
+    base_dir = Path.join([working_dir, "#{name}.docset"])
+    files_dir = Path.join([base_dir, "Contents", "Resources", "Documents"])
+    docs_archive = Path.join([working_dir, "#{name}_hexdocs.tar.gz"])
 
     Logger.debug("Create working dir #{release_name}.docset")
 
@@ -80,11 +84,13 @@ defmodule DocsetApi.Builder do
     }
   end
 
-  defp download_and_extract_docs(%{
-    docs_archive: docs_archive,
-    release: %Release{name: name, version: version, docs_url: docs_url},
-    files_dir: files_dir
-  } = state) do
+  defp download_and_extract_docs(
+         %{
+           docs_archive: docs_archive,
+           release: %Release{name: name, version: version, docs_url: docs_url},
+           files_dir: files_dir
+         } = state
+       ) do
     url = docs_url || "https://hex.pm/api/packages/#{name}/releases/#{version}/docs"
 
     Logger.debug("download from #{url} to #{docs_archive} and extract to #{files_dir}")
@@ -110,7 +116,7 @@ defmodule DocsetApi.Builder do
     <plist version="1.0">
       <dict>
         <key>CFBundleIdentifier</key>
-        <string>#{String.downcase name}</string>
+        <string>#{String.downcase(name)}</string>
 
         <key>CFBundleName</key>
         <string>#{name}</string>
@@ -134,12 +140,13 @@ defmodule DocsetApi.Builder do
     |> Path.join("Contents/Info.plist")
     |> File.write!(info_plist)
 
-    info_meta = Poison.encode! %{
-      extra: %{isJavaScriptEnabled: true},
-      name: name,
-      version: version,
-      title: name
-    }
+    info_meta =
+      Poison.encode!(%{
+        extra: %{isJavaScriptEnabled: true},
+        name: name,
+        version: version,
+        title: name
+      })
 
     base_dir
     |> Path.join("meta.json")
@@ -157,12 +164,12 @@ defmodule DocsetApi.Builder do
   end
 
   defp find_logo(files_dir) do
-    package_logo_file = Path.join [files_dir, "assets", "logo.png"]
+    package_logo_file = Path.join([files_dir, "assets", "logo.png"])
 
     if File.exists?(package_logo_file) do
       package_logo_file
     else
-      Path.join [to_string(:code.priv_dir(:docset_api)), "static", "images", "hexpm.png"]
+      Path.join([to_string(:code.priv_dir(:docset_api)), "static", "images", "hexpm.png"])
     end
   end
 
@@ -206,7 +213,7 @@ defmodule DocsetApi.Builder do
   end
 
   def return_error(%HTTPoison.Error{reason: reason}) do
-    Logger.error inspect reason, pretty: true
+    Logger.error(inspect(reason, pretty: true))
   end
 
   defp ls_r(path) do
@@ -217,7 +224,7 @@ defmodule DocsetApi.Builder do
       File.dir?(path) ->
         path
         |> File.ls!()
-        |> Enum.flat_map(& ls_r Path.join(path, &1))
+        |> Enum.flat_map(&ls_r(Path.join(path, &1)))
 
       true ->
         []

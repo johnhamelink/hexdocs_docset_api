@@ -18,7 +18,7 @@ defmodule DocsetApi.BuilderServer do
   end
 
   def update_package(pkg, destination) do
-    call {:build_package, pkg, destination}
+    call({:build_package, pkg, destination})
   end
 
   def fetch_package(pkg, destination) do
@@ -36,7 +36,7 @@ defmodule DocsetApi.BuilderServer do
   end
 
   defp tomorrow do
-    :timer.hours 24
+    :timer.hours(24)
   end
 
   def handle_call({:build_package, pkg_name, destination}, _from, packages) do

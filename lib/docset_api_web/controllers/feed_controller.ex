@@ -5,14 +5,15 @@ defmodule DocsetApi.FeedController do
   def show(conn, %{"package_name" => package}) do
     package = String.trim_trailing(package, ".tgz")
 
-
     path =
-      Path.absname Path.join [
-        DocsetApi.docset_dir(),
-        "static",
-        "docsets",
-        "#{package}.tgz",
-      ]
+      Path.absname(
+        Path.join([
+          DocsetApi.docset_dir(),
+          "static",
+          "docsets",
+          "#{package}.tgz"
+        ])
+      )
 
     release = BuilderServer.fetch_package(package, path)
 
@@ -21,12 +22,14 @@ defmodule DocsetApi.FeedController do
 
   def docset(conn, %{"docset" => docset}) do
     filename =
-      Path.absname Path.join [
-        DocsetApi.docset_dir(),
-        "static",
-        "docsets",
-        docset
-      ]
+      Path.absname(
+        Path.join([
+          DocsetApi.docset_dir(),
+          "static",
+          "docsets",
+          docset
+        ])
+      )
 
     if File.exists?(filename) do
       send_file(conn, 200, filename)
@@ -34,5 +37,4 @@ defmodule DocsetApi.FeedController do
       send_resp(conn, 404, "Docset not found")
     end
   end
-
 end

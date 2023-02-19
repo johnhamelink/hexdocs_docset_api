@@ -29,12 +29,13 @@ defmodule DocsetApi do
 
   def docset_dir do
     case Application.fetch_env(:docset_api, :docset_dir) do
-      {:ok, dir} -> dir
+      {:ok, dir} ->
+        dir
+
       :error ->
         tmp = Path.join(System.tmp_dir!(), "hexdocs_docset_api")
         Application.put_env(:docset_api, :docset_dir, tmp)
         docset_dir()
     end
   end
-
 end

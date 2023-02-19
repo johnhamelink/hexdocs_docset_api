@@ -8,5 +8,4 @@ defmodule DocsetApi.Endpoint do
     pass: ["*/*"]
 
   plug DocsetApi.Router
-
 end
