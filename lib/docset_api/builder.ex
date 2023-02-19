@@ -196,10 +196,52 @@ defmodule DocsetApi.Builder do
 
       # For each file, parse it for the right keywords and run the callback # against the result.
       Enum.each(files, fn file ->
-        FileParser.parse_file(file, files_dir, fn name, type, path ->
-          query = "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('#{name}', '#{type}', '#{path}');"
-          {:ok, _} = Sqlitex.query(db, query)
-        end)
+        if Path.extname(file) == ".html" do
+          # Logger.debug("parse #{file}")
+
+          html = Floki.parse_document!(File.read!(file))
+          relative_path = Path.relative_to(file, files_dir)
+
+          # Set sidebar-closed sur le body au lieu de sidebar-opened
+          # Remove sidebar-button sidebar-toggle
+          # Remove icon-action display-settings
+          content =
+            FileParser.parse_zeal_navigation(html, relative_path, fn name, type, path ->
+              query =
+                "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('#{name}', '#{type}', '#{path}');"
+
+              {:ok, _} = Sqlitex.query(db, query)
+            end)
+            |> Floki.attr("body", "class", fn
+              nil ->
+                "sidebar-closed"
+
+              classes ->
+                if String.contains?(classes, "sidebar-opened") do
+                  String.replace(classes, "sidebar-opened", "sidebar-closed")
+                else
+                  "#{classes} sidebar-closed"
+                end
+            end)
+            |> Floki.find_and_update("button", fn button ->
+              button_classes = Floki.attribute(button, "class")
+
+              if Enum.all?(button_classes, &String.starts_with?(&1, "sidebar-")) or
+                   Enum.member?(button_classes, "display-settings") do
+                :delete
+              else
+                button
+              end
+            end)
+            |> Floki.raw_html()
+
+          File.write(
+            file,
+            content
+          )
+        else
+          Logger.debug("skip #{file}")
+        end
       end)
     end)
 
