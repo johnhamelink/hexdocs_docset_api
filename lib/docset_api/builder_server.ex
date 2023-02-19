@@ -22,9 +22,12 @@ defmodule DocsetApi.BuilderServer do
   end
 
   def fetch_package(pkg, destination) do
-    case call {:get_cached, pkg} do
-      {:ok, package} -> package
-      :error -> call {:build_package, pkg, destination}
+    with {:ok, package} <- call({:get_cached, pkg}),
+         true <- File.exists?(package.destination) do
+      package
+    else
+      _ ->
+        call({:build_package, pkg, destination})
     end
   end
 
