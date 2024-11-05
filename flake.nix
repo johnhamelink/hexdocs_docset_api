@@ -37,9 +37,11 @@
               elixir-ls
               fswatch # Used to re-run tests
 
-              # For Database
+              # For Elixir deps
               sqlite
+              gnutar
             ];
+
           };
         };
     };
