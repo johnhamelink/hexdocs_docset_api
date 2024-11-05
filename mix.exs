@@ -30,8 +30,7 @@ defmodule DocsetApi.Mixfile do
       {:plug_cowboy, "~> 2.7"},
       {:httpoison, "~> 2.2"},
       {:poison, "~> 2.2 or ~> 3.0 or ~> 4.0 or ~> 5.0 or ~> 6.0"},
-      {:sqlitex, "~> 1.7"},
-      {:esqlite, "~> 0.8"},
+      {:exqlite, "~> 0.27"},
       {:floki, ">= 0.3.0"}
     ]
   end

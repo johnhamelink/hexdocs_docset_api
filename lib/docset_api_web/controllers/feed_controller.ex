@@ -3,33 +3,19 @@ defmodule DocsetApi.FeedController do
   alias DocsetApi.BuilderServer
 
   def show(conn, %{"package_name" => package}) do
-    package = String.trim_trailing(package, ".tgz")
-
-    path =
-      Path.absname(
-        Path.join([
-          DocsetApi.docset_dir(),
-          "static",
-          "docsets",
-          "#{package}.tgz"
-        ])
-      )
-
-    release = BuilderServer.fetch_package(package, path)
-
-    render(conn, "show.xml", release: release)
+    entry = BuilderServer.fetch_package(package)
+    render(conn, "show.xml", entry: entry)
   end
 
   def docset(conn, %{"docset" => docset}) do
+
+    package = String.trim_trailing(docset, ".tar.gz")
+    [name, _] = String.split(package, "-")
+
     filename =
-      Path.absname(
-        Path.join([
-          DocsetApi.docset_dir(),
-          "static",
-          "docsets",
-          docset
-        ])
-      )
+      Path.join([System.tmp_dir(), "hexdocs_docset", name, docset])
+      |> Path.absname()
+      |> IO.inspect(label: "candidate filename")
 
     if File.exists?(filename) do
       send_file(conn, 200, filename)

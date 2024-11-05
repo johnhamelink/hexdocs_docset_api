@@ -21,13 +21,14 @@ defmodule DocsetApi.BuilderServer do
     call({:build_package, pkg, destination})
   end
 
-  def fetch_package(pkg, destination) do
-    with {:ok, package} <- call({:get_cached, pkg}),
-         true <- File.exists?(package.destination) do
+  def fetch_package(pkg) do
+    with {:ok, package = %{working_dir: working_dir, release: %{name: name, version: version}}} <-
+           call({:get_cached, pkg}),
+         package_path <- Path.join([working_dir, "#{name}-#{version}.tar.gz"]),
+         true <- File.exists?(package_path) do
       package
     else
-      _ ->
-        call({:build_package, pkg, destination})
+      _cache_miss_state -> call({:build_package, pkg})
     end
   end
 
@@ -42,8 +43,9 @@ defmodule DocsetApi.BuilderServer do
     :timer.hours(24)
   end
 
-  def handle_call({:build_package, pkg_name, destination}, _from, packages) do
-    pkg = Builder.build(pkg_name, destination)
+  def handle_call({:build_package, pkg_name}, _from, packages) do
+    docset = Builder.build(pkg_name)
+    pkg = Builder.build_tarball(docset, docset[:working_dir])
     {:reply, pkg, Map.put(packages, pkg_name, pkg)}
   end
 
@@ -53,7 +55,7 @@ defmodule DocsetApi.BuilderServer do
 
   def handle_info(:update_packages, packages) do
     packages
-    |> Task.async_stream(fn {pkg, release} -> Builder.build(pkg, release.destination) end)
+    |> Task.async_stream(fn {pkg, _release} -> Builder.build(pkg) end)
     |> Stream.run()
 
     Process.send_after(self(), :update_packages, tomorrow())
