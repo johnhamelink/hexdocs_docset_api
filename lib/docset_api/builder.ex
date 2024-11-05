@@ -74,7 +74,7 @@ defmodule DocsetApi.Builder do
   end
 
   defp get_latest_version(name, %HTTPoison.Response{body: json, status_code: 200}) do
-    version =
+    release =
       json
       |> Poison.decode!(as: %{"releases" => [%Release{}]})
       |> Map.fetch!("releases")
@@ -85,7 +85,7 @@ defmodule DocsetApi.Builder do
       |> Poison.decode!(as: %Release{})
       |> Map.replace!(:name, name)
 
-    {:ok, version}
+    {:ok, release}
   end
 
   defp get_latest_version(name, %HTTPoison.Response{body: json, status_code: status})
