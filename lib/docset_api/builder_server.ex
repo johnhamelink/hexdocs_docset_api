@@ -24,7 +24,7 @@ defmodule DocsetApi.BuilderServer do
   def fetch_package(pkg) do
     with {:ok, package = %{working_dir: working_dir, release: %{name: name, version: version}}} <-
            call({:get_cached, pkg}),
-         package_path <- Path.join([working_dir, "#{name}-#{version}.tar.gz"]),
+         package_path <- Path.join([working_dir, "#{name}-#{version}.tgz"]),
          true <- File.exists?(package_path) do
       package
     else

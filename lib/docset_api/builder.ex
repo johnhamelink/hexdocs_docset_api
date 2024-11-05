@@ -39,7 +39,7 @@ defmodule DocsetApi.Builder do
          %{base_dir: base_dir, release: %{name: name, version: version}} = state,
          dest_dir
        ) do
-    filename = Path.join(dest_dir, "#{name}-#{version}.tar.gz")
+    filename = Path.join(dest_dir, "#{name}-#{version}.tgz")
     Logger.debug("Writing tarball to #{filename}")
     System.cmd("tar", ["-czvf", filename, "."], cd: base_dir)
 

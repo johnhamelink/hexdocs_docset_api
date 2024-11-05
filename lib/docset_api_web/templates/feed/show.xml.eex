@@ -1,4 +1,4 @@
 <entry>
     <version><%= @entry.release.version %></version>
-    <url><%= base_url() %>/docsets/<%= @entry.release.name %>-<%= @entry.release.version %>.tar.gz</url>
+    <url><%= base_url() %>/docsets/<%= @entry.release.name %>-<%= @entry.release.version %>.tgz</url>
 </entry>

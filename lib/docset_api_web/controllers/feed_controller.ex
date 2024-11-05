@@ -9,7 +9,7 @@ defmodule DocsetApi.FeedController do
 
   def docset(conn, %{"docset" => docset}) do
 
-    package = String.trim_trailing(docset, ".tar.gz")
+    package = String.trim_trailing(docset, ".tgz")
     [name, _] = String.split(package, "-")
 
     filename =
