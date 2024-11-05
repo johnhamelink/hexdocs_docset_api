@@ -4,7 +4,7 @@ defmodule DocsetApi.Mixfile do
   def project do
     [
       app: :docset_api,
-      version: "0.1.0",
+      version: File.read!("VERSION"),
       elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       build_embedded: Mix.env() == :prod,

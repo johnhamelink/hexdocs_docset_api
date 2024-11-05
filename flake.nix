@@ -25,6 +25,8 @@
       perSystem =
         { pkgs, ... }:
         {
+          packages.default = (pkgs.callPackage ./default.nix { inherit pkgs; });
+
           devShells.default = pkgs.mkShell {
             packages = with pkgs; [
               # For Nix

@@ -21,6 +21,19 @@ let
       beamDeps = [];
     };
 
+    cc_precompiler = buildMix rec {
+      name = "cc_precompiler";
+      version = "0.1.10";
+
+      src = fetchHex {
+        pkg = "cc_precompiler";
+        version = "${version}";
+        sha256 = "f6e046254e53cd6b41c6bacd70ae728011aa82b2742a80d6e2214855c6e06b22";
+      };
+
+      beamDeps = [ elixir_make ];
+    };
+
     certifi = buildRebar3 rec {
       name = "certifi";
       version = "2.12.0";
@@ -73,6 +86,19 @@ let
       beamDeps = [];
     };
 
+    db_connection = buildMix rec {
+      name = "db_connection";
+      version = "2.7.0";
+
+      src = fetchHex {
+        pkg = "db_connection";
+        version = "${version}";
+        sha256 = "dcf08f31b2701f857dfc787fbad78223d61a32204f217f15e881dd93e4bdd3ff";
+      };
+
+      beamDeps = [ telemetry ];
+    };
+
     decimal = buildMix rec {
       name = "decimal";
       version = "1.9.0";
@@ -86,17 +112,30 @@ let
       beamDeps = [];
     };
 
-    esqlite = buildRebar3 rec {
-      name = "esqlite";
-      version = "0.8.8";
+    elixir_make = buildMix rec {
+      name = "elixir_make";
+      version = "0.8.4";
 
       src = fetchHex {
-        pkg = "esqlite";
+        pkg = "elixir_make";
         version = "${version}";
-        sha256 = "374902457c7d94dc9409c98d3bdd1ca0d50a60dc9f3bdf1fd8eb74c0dcdf02d6";
+        sha256 = "6e7f1d619b5f61dfabd0a20aa268e575572b542ac31723293a4c1a567d5ef040";
       };
 
-      beamDeps = [];
+      beamDeps = [ castore certifi ];
+    };
+
+    exqlite = buildMix rec {
+      name = "exqlite";
+      version = "0.27.0";
+
+      src = fetchHex {
+        pkg = "exqlite";
+        version = "${version}";
+        sha256 = "b947b9db15bb7aad11da6cd18a0d8b78f7fcce89508a27a5b9be18350fe12c59";
+      };
+
+      beamDeps = [ cc_precompiler db_connection elixir_make ];
     };
 
     floki = buildMix rec {
@@ -229,19 +268,6 @@ let
       beamDeps = [ plug ];
     };
 
-    phoenix_html_helpers = buildMix rec {
-      name = "phoenix_html_helpers";
-      version = "1.0.1";
-
-      src = fetchHex {
-        pkg = "phoenix_html_helpers";
-        version = "${version}";
-        sha256 = "cffd2385d1fa4f78b04432df69ab8da63dc5cf63e07b713a4dcf36a3740e3090";
-      };
-
-      beamDeps = [ phoenix_html plug ];
-    };
-
     phoenix_pubsub = buildMix rec {
       name = "phoenix_pubsub";
       version = "2.1.3";
@@ -270,12 +296,12 @@ let
 
     phoenix_view = buildMix rec {
       name = "phoenix_view";
-      version = "2.0.2";
+      version = "2.0.4";
 
       src = fetchHex {
         pkg = "phoenix_view";
         version = "${version}";
-        sha256 = "a929e7230ea5c7ee0e149ffcf44ce7cf7f4b6d2bfe1752dd7c084cdff152d36f";
+        sha256 = "4e992022ce14f31fe57335db27a28154afcc94e9983266835bb3040243eb620b";
       };
 
       beamDeps = [ phoenix_html phoenix_template ];
@@ -344,19 +370,6 @@ let
       };
 
       beamDeps = [];
-    };
-
-    sqlitex = buildMix rec {
-      name = "sqlitex";
-      version = "1.7.1";
-
-      src = fetchHex {
-        pkg = "sqlitex";
-        version = "${version}";
-        sha256 = "ef16cda37b151136a47a6c0830dc9eb5e5f8f5f029b649e9f3a58a6eed634b80";
-      };
-
-      beamDeps = [ decimal esqlite ];
     };
 
     ssl_verify_fun = buildRebar3 rec {
