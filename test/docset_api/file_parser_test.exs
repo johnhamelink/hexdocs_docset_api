@@ -27,6 +27,10 @@ defmodule DocsetApi.FileParserTest do
   # representing fixture files, and the values representing the
   # various types of expectations we have on those files.
   @specs %{
+     # This is a behaviour, not an interface, but it's the closest
+     # that the docset spec provides.
+     #
+     # TODO: See about proposing behaviours to be added to the spec.
     "exdoc-0.34-ecto-3.12.4--Ecto.Adapter.html" => %{
       callbacks: [
         {"Ecto.Adapter", "Interface", "Ecto.Adapter.html#content"},
@@ -87,7 +91,21 @@ defmodule DocsetApi.FileParserTest do
         {"Ecto.Query.API.type/2", "Function", "Ecto.Query.API.html#type/2"},
         {"Ecto.Query.API.values/2", "Function", "Ecto.Query.API.html#values/2"}
       ]
+    },
+
+    "exdoc-0.34-ecto-3.12.4--getting-started.html" => %{
+      callbacks: [{"Getting Started", "Guide", "getting-started.html#content"}]
+    },
+
+    "exdoc-0.34-ecto-3.12.4--Ecto.QueryError.html" => %{
+      callbacks: [{"Ecto.QueryError", "Exception", "Ecto.QueryError.html#content"}]
+    },
+
+    # This is not a guide, but a "cheatsheet", which we put in the guide category.
+    "exdoc-0.34-ecto-3.12.4--crud.html" => %{
+      callbacks: [{"Basic CRUD", "Guide", "crud.html#content"}]
     }
+
   }
 
   # Split between fixtures specs & html filename

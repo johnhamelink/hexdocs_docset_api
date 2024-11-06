@@ -1,0 +1,43 @@
+<html lang="en"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="ie=edge"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="generator" content="ExDoc v0.34.2"/><meta name="project" content="Ecto v3.12.4"/><title>Ecto.QueryError — Ecto v3.12.4</title><link rel="stylesheet" href="dist/html-elixir-F2VRIOKR.css"/><script src="dist/handlebars.runtime-NWIB6V2M.js"></script><script src="dist/handlebars.templates-K7URE6B4.js"></script><script src="dist/sidebar_items-2FBD157F.js"></script><script src="docs_config.js"></script><script async="async" src="dist/html-YIPIRHGU.js"></script></head><body data-type="modules" class="page-exception sidebar-closed"><script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script><div class="body-wrapper"><nav id="sidebar" class="sidebar"><div class="sidebar-header"><div class="sidebar-projectInfo"><a href="Ecto.html" class="sidebar-projectImage"><img src="assets/logo.png" alt="Ecto"/></a><div><a href="Ecto.html" class="sidebar-projectName" translate="no">
+Ecto
+        </a><div class="sidebar-projectVersion" translate="no">
+          v3.12.4
+        </div></div></div><ul id="sidebar-listNav" class="sidebar-listNav" role="tablist"><li></li><li></li><li></li></ul></div><div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button"><ul id="extras-full-list" class="full-list"></ul></div><div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden="hidden"><ul id="modules-full-list" class="full-list"></ul></div><div id="tasks-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="tasks-list-tab-button" hidden="hidden"><ul id="tasks-full-list" class="full-list"></ul></div></nav><main class="content"><output role="status" id="toast"></output><div id="content" class="content-inner"><div class="top-search"><div class="search-settings"><form class="search-bar" action="search.html"><label class="search-label"><span class="sr-only">Search documentation of Ecto</span><input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/></label></form><div class="autocomplete"></div></div></div><div id="top-content"><h1><a href="https://github.com/elixir-ecto/ecto/blob/v3.12.4/lib/ecto/exceptions.ex#L22" title="View Source" class="icon-action" rel="help"><i class="ri-code-s-slash-line" aria-hidden="true"></i><span class="sr-only">View Source</span></a><span translate="no">Ecto.QueryError</span><small>exception</small><small class="app-vsn" translate="no">(Ecto v3.12.4)</small></h1><section id="moduledoc"><p>Raised at runtime when the query is invalid.</p></section></div><footer class="footer"><p><span class="line"><a href="https://hex.pm/packages/ecto/3.12.4" class="footer-hex-package">Hex Package</a><a href="https://preview.hex.pm/preview/ecto/3.12.4">Hex Preview</a></span><span class="line"><a href="Ecto.epub" title="ePub version">
+              Download ePub version
+            </a></span></p><p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.34.2) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a></p></footer></div></main></div><script src="https://cdn.jsdelivr.net/npm/mermaid@10.2.3/dist/mermaid.min.js"></script><script>
+  document.addEventListener("DOMContentLoaded", function () {
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: document.body.className.includes("dark") ? "dark" : "default"
+    });
+    let id = 0;
+    for (const codeEl of document.querySelectorAll("pre code.mermaid")) {
+      const preEl = codeEl.parentElement;
+      const graphDefinition = codeEl.textContent;
+      const graphEl = document.createElement("div");
+      const graphId = "mermaid-graph-" + id++;
+      mermaid.render(graphId, graphDefinition).then(({svg, bindFunctions}) => {
+        graphEl.innerHTML = svg;
+        bindFunctions?.(graphEl);
+        preEl.insertAdjacentElement("afterend", graphEl);
+        preEl.remove();
+      });
+    }
+  });
+</script></body></html>

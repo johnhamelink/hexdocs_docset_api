@@ -26,6 +26,34 @@ defmodule DocsetApi.FileParser do
       # Error
       # Event
       # Exception
+      "Exception" => %{
+        type: :whole_file,
+        # finder: fn html ->
+        #   IEx.pry
+        #   Floki.attribute(Floki.find(html, ""), "id")
+        # end,
+
+        # This function is used to check if a page "is a guide" or "is
+        # a module".
+        predicate: fn html ->
+          body_tag = Floki.find(html, "body")
+
+          class_items =
+            Floki.attribute(body_tag, "class")
+            |> Enum.flat_map(&String.split(&1, " "))
+
+          "modules" in Floki.attribute(body_tag, "data-type") and
+            "page-exception" in class_items
+        end,
+        finder: fn html ->
+          Floki.find(html, "div#top-content span")
+          |> Enum.at(1)
+          |> Floki.text()
+          |> String.trim()
+        end,
+        content_selector: &"#{&1}#content"
+      },
+
       # Extension
       # Field
       # File
@@ -63,10 +91,22 @@ defmodule DocsetApi.FileParser do
 
           class_items =
             Floki.attribute(body_tag, "class")
-            |> Enum.map(&String.split(&1, " "))
+            |> Enum.flat_map(&String.split(&1, " "))
+            |> MapSet.new
 
-          "extras" in Floki.attribute(body_tag, "data-type") and
-            "page-extra" in class_items
+          class_intersection =
+            MapSet.new(["page-extra", "page-cheatmd"])
+            |> MapSet.intersection(class_items)
+
+          "extras" in Floki.attribute(body_tag, "data-type")
+                             and MapSet.size(class_intersection) > 0
+        end,
+        finder: fn html ->
+          Floki.find(html, "title")
+          |> Floki.text
+          |> String.trim()
+          |> String.split(" — ")
+          |> List.first
         end,
         content_selector: &"#{&1}#content"
       },
@@ -190,7 +230,7 @@ defmodule DocsetApi.FileParser do
     # remind me where to adjust this if necessary.
     |> Enum.find_value(fn {type, parser} ->
       Logger.debug("Checking if file is of type #{type}")
-      # if file_path == "Ecto.Query.API.html", do: IEx.pry()
+      # if file_path == "crud.html", do: IEx.pry()
 
       if parser.predicate.(html) do
         name = parser.finder.(html)
@@ -243,8 +283,8 @@ defmodule DocsetApi.FileParser do
   def parse_zeal_navigation(html, file_path, callback) when is_function(callback) do
     case parse_file_type(html, file_path, callback) do
       {namespace, _type, _file_path} -> parse_inside_file(html, namespace, file_path, callback)
-      nil -> raise "Could not categorise #{file_path}. This is a bug."
-      other -> IEx.pry
+      nil -> Logger.warning "Could not categorise #{file_path}. If this is surprising then consider it a bug. Moving on."
+      other -> Logger.warning "Could not categorise response #{inspect other}. This is a bug."
     end
 
     html
