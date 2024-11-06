@@ -33,8 +33,8 @@ defmodule DocsetApi.FileParserTest do
       callbacks: [
         {"Ecto.Adapter", "Interface", "Ecto.Adapter.html#content"},
         {"Ecto.Adapter.lookup_meta/1", "Function", "Ecto.Adapter.html#lookup_meta/1"},
-        {"Ecto.Adapter.adapter_meta/0", "Type", "Ecto.Adapter.html#adapter_meta/0"},
-        {"Ecto.Adapter.t/0", "Type", "Ecto.Adapter.html#t/0"}
+        {"Ecto.Adapter.adapter_meta/0", "Type", "Ecto.Adapter.html#t:adapter_meta/0"},
+        {"Ecto.Adapter.t/0", "Type", "Ecto.Adapter.html#t:t/0"}
       ]
     },
     "exdoc-0.34.0-ecto-3.12.4--Ecto.Query.API.html" => %{
@@ -104,7 +104,7 @@ defmodule DocsetApi.FileParserTest do
       callbacks: [
         {"Phoenix.Param", "Protocol", "Phoenix.Param.html#content"},
         {"Phoenix.Param.to_param/1", "Function", "Phoenix.Param.html#to_param/1"},
-        {"Phoenix.Param.t/0", "Type", "Phoenix.Param.html#t/0"}
+        {"Phoenix.Param.t/0", "Type", "Phoenix.Param.html#t:t/0"}
       ]
     },
     "exdoc-0.34.0-phoenix-1.7.14--Phoenix.Socket.Transport.html" => %{
@@ -115,14 +115,14 @@ defmodule DocsetApi.FileParserTest do
         {"Phoenix.Socket.Transport.code_reload/3", "Function", "Phoenix.Socket.Transport.html#code_reload/3"},
         {"Phoenix.Socket.Transport.connect_info/3", "Function", "Phoenix.Socket.Transport.html#connect_info/3"},
         {"Phoenix.Socket.Transport.transport_log/2", "Function", "Phoenix.Socket.Transport.html#transport_log/2"},
-        {"Phoenix.Socket.Transport.state/0", "Type", "Phoenix.Socket.Transport.html#state/0"}
+        {"Phoenix.Socket.Transport.state/0", "Type", "Phoenix.Socket.Transport.html#t:state/0"}
       ]
     },
     "exdoc-0.28.6-jason-1.5.0.alpha2--Jason.EncodeError.html" => %{
       callbacks: [
         {"Jason.EncodeError", "Exception", "Jason.EncodeError.html#content"},
         {"Jason.EncodeError.new/1", "Function", "Jason.EncodeError.html#new/1"},
-        {"Jason.EncodeError.t/0", "Type", "Jason.EncodeError.html#t/0"}
+        {"Jason.EncodeError.t/0", "Type", "Jason.EncodeError.html#t:t/0"}
       ]
     }
   }

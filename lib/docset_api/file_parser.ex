@@ -253,7 +253,7 @@ defmodule DocsetApi.FileParser do
         finder: &Floki.attribute(Floki.find(&1, ".types-list .detail"), "id"),
 
         # The relative path to the content to navigate to
-        content_selector: &"#{&1}#" <> String.replace_prefix(&2, "t:", "")
+        content_selector: &"#{&1}##{&2}"
       }
 
       # Union
