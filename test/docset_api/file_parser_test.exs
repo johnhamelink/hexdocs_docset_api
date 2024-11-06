@@ -166,6 +166,13 @@ defmodule DocsetApi.FileParserTest do
         {"HTTPoison.Base.response/0", "Type", "HTTPoison.Base.html#t:response/0"},
         {"HTTPoison.Base.url/0", "Type", "HTTPoison.Base.html#t:url/0"}
       ]
+    },
+    "exdoc-0.25.5-httpoison-2.2.1--HTTPoison.Error.html" => %{
+      callbacks: [
+        {"HTTPoison.Error", "Exception", "HTTPoison.Error.html#content"},
+        {"HTTPoison.Error.message/1", "Function", "HTTPoison.Error.html#message/1"},
+        {"HTTPoison.Error.t/0", "Type", "HTTPoison.Error.html#t:t/0"}
+      ]
     }
   }
 

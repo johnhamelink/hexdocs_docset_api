@@ -2,12 +2,42 @@ defmodule DocsetApi.FileParser do
   require Logger
   require IEx
 
+
   defp whole_file_finder(html) do
     Floki.find(html, "title")
     |> Floki.text()
     |> String.trim()
     |> String.split(" — ")
     |> List.first()
+  end
+
+  defp exdoc_25_is_type?(html, expected) do
+    body_tag = Floki.find(html, "body")
+
+    module_type =
+      Floki.find(html, "div.content-inner>h1>small")
+      |> List.first
+      |> Floki.text
+      |> String.trim
+
+    if expected == "module" do
+      "modules" in Floki.attribute(body_tag, "data-type") and
+        module_type not in module_subtypes(:downcase)
+    else
+      "modules" in Floki.attribute(body_tag, "data-type") and
+        module_type == expected
+    end
+  end
+
+  defp exdoc_is_type?(html, expected) do
+    body_tag = Floki.find(html, "body")
+
+    class_items =
+      Floki.attribute(body_tag, "class")
+      |> Enum.flat_map(&String.split(&1, " "))
+
+    "modules" in Floki.attribute(body_tag, "data-type") and
+      "page-#{expected}" in class_items
   end
 
   # Other available types to chose from:
@@ -31,17 +61,10 @@ defmodule DocsetApi.FileParser do
         # Determines whether the file in question is of
         # type "exception" or not.
         is_type?: fn
-          {:exdoc, _version} ->
-            fn html ->
-              body_tag = Floki.find(html, "body")
-
-              class_items =
-                Floki.attribute(body_tag, "class")
-                |> Enum.flat_map(&String.split(&1, " "))
-
-              "modules" in Floki.attribute(body_tag, "data-type") and
-                "page-exception" in class_items
-            end
+          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m > 25 ->
+            &exdoc_is_type?(&1, "exception")
+          {:exdoc, %Version{major: 0, minor: 25, patch: _}} ->
+            &exdoc_25_is_type?(&1, "exception")
         end,
         # What is the ID of this thing?
         id: fn
@@ -102,29 +125,9 @@ defmodule DocsetApi.FileParser do
         type: :whole_file,
         is_type?: fn
           {:exdoc, %Version{major: 0, minor: m, patch: _}} when m > 25 ->
-            fn html ->
-              body_tag = Floki.find(html, "body")
-
-              class_items =
-                Floki.attribute(body_tag, "class")
-                |> Enum.flat_map(&String.split(&1, " "))
-
-              "modules" in Floki.attribute(body_tag, "data-type") and
-                "page-behaviour" in class_items
-            end
+            &exdoc_is_type?(&1, "behaviour")
           {:exdoc, %Version{major: 0, minor: 25, patch: _}} ->
-            fn html ->
-              body_tag = Floki.find(html, "body")
-
-              module_type =
-                Floki.find(html, "div.content-inner>h1>small")
-                |> List.first
-                |> Floki.text
-                |> String.trim
-
-              "modules" in Floki.attribute(body_tag, "data-type") and
-                module_type == "behaviour"
-            end
+            &exdoc_25_is_type?(&1, "behaviour")
         end,
         id: fn
           {:exdoc, _} -> &whole_file_finder/1
@@ -137,29 +140,10 @@ defmodule DocsetApi.FileParser do
       "Module" => %{
         type: :whole_file,
         is_type?: fn
-          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m > 25 -> fn html ->
-            body_tag = Floki.find(html, "body")
-
-            class_items =
-              Floki.attribute(body_tag, "class")
-              |> Enum.flat_map(&String.split(&1, " "))
-
-            "modules" in Floki.attribute(body_tag, "data-type") and
-              "page-module" in class_items
-          end
+          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m > 25 ->
+            &exdoc_is_type?(&1, "module")
           {:exdoc, %Version{major: 0, minor: 25, patch: _}} ->
-            fn html ->
-              body_tag = Floki.find(html, "body")
-
-              module_type =
-                Floki.find(html, "div.content-inner>h1>small")
-                |> List.first
-                |> Floki.text
-                |> String.trim
-
-              "modules" in Floki.attribute(body_tag, "data-type") and
-                module_type not in ~w[behaviour]
-            end
+            &exdoc_25_is_type?(&1, "module")
         end,
         id: fn
           {:exdoc, _} -> &whole_file_finder/1
@@ -174,16 +158,10 @@ defmodule DocsetApi.FileParser do
       "Procedure" => %{
         type: :whole_file,
         is_type?: fn
-          {:exdoc, _} -> fn html ->
-            body_tag = Floki.find(html, "body")
-
-            class_items =
-              Floki.attribute(body_tag, "class")
-              |> Enum.flat_map(&String.split(&1, " "))
-
-            "tasks" in Floki.attribute(body_tag, "data-type") and
-              "page-task" in class_items
-          end
+          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m > 25 ->
+            &exdoc_is_type?(&1, "task")
+          {:exdoc, %Version{major: 0, minor: 25, patch: _}} ->
+            &exdoc_25_is_type?(&1, "task")
         end,
         id: fn
           {:exdoc, _} -> &whole_file_finder/1
@@ -196,16 +174,10 @@ defmodule DocsetApi.FileParser do
       "Protocol" => %{
         type: :whole_file,
         is_type?: fn
-          {:exdoc, _} -> fn html ->
-            body_tag = Floki.find(html, "body")
-
-            class_items =
-              Floki.attribute(body_tag, "class")
-              |> Enum.flat_map(&String.split(&1, " "))
-
-            "modules" in Floki.attribute(body_tag, "data-type") and
-              "page-protocol" in class_items
-          end
+          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m > 25 ->
+            &exdoc_is_type?(&1, "protocol")
+          {:exdoc, %Version{major: 0, minor: 25, patch: _}} ->
+            &exdoc_25_is_type?(&1, "protocol")
         end,
         id: fn
           {:exdoc, _} -> &whole_file_finder/1
@@ -246,6 +218,23 @@ defmodule DocsetApi.FileParser do
       ],
       fn x -> x.() end
     )
+  end
+
+  def module_subtypes(:downcase) do
+    Enum.map(module_subtypes(), &String.downcase/1)
+  end
+
+  def module_subtypes(:upcase) do
+    Enum.map(module_subtypes(), &String.upcase/1)
+  end
+
+  def module_subtypes() do
+    parsers()
+    |> Map.filter(fn
+      {_key, %{type: :whole_file}} -> true
+      _ -> false
+    end)
+    |> Map.keys
   end
 
   def parsers(type_filter) do
