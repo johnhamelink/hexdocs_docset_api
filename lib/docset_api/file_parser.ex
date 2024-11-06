@@ -40,6 +40,17 @@ defmodule DocsetApi.FileParser do
       "page-#{expected}" in class_items
   end
 
+  def identify_check_for(:exdoc, html) do
+    ["ExDoc", version] =
+      Floki.find(html, "meta[name=\"generator\"]")
+      |> Floki.attribute("content")
+      |> Floki.text()
+      |> String.trim()
+      |> String.split(" v")
+
+    {:exdoc, Version.parse!(version)}
+  end
+
   # Other available types to chose from:
   #
   # Annotation Attribute Binding Builtin Callback Category Class
@@ -333,16 +344,5 @@ defmodule DocsetApi.FileParser do
     end
 
     html
-  end
-
-  def identify_check_for(:exdoc, html) do
-    ["ExDoc", version] =
-      Floki.find(html, "meta[name=\"generator\"]")
-      |> Floki.attribute("content")
-      |> Floki.text()
-      |> String.trim()
-      |> String.split(" v")
-
-    {:exdoc, Version.parse!(version)}
   end
 end
