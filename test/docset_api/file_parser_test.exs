@@ -29,16 +29,65 @@ defmodule DocsetApi.FileParserTest do
   @specs %{
     "exdoc-0.34-ecto-3.12.4--Ecto.Adapter.html" => %{
       callbacks: [
+        {"Ecto.Adapter", "Interface", "Ecto.Adapter.html#content"},
         {"Ecto.Adapter.lookup_meta/1", "Function", "Ecto.Adapter.html#lookup_meta/1"},
         {"Ecto.Adapter.t:adapter_meta/0", "Type", "Ecto.Adapter.html#t:adapter_meta/0"},
-        {"Ecto.Adapter.t:t/0", "Type", "Ecto.Adapter.html#t:t/0"},
-        {"Ecto.Adapter", "Interface", "Ecto.Adapter.html#content"}
+        {"Ecto.Adapter.t:t/0", "Type", "Ecto.Adapter.html#t:t/0"}
       ]
     },
     "exdoc-0.34-ecto-3.12.4--Ecto.Query.API.html" => %{
       callbacks: [
+        {"Ecto.Query.API", "Module", "Ecto.Query.API.html#content"},
+        {"Ecto.Query.API.avg/1", "Function", "Ecto.Query.API.html#avg/1"},
+        {"Ecto.Query.API.*/2", "Function", "Ecto.Query.API.html#*/2"},
+        {"Ecto.Query.API.+/2", "Function", "Ecto.Query.API.html#+/2"},
+        {"Ecto.Query.API.-/2", "Function", "Ecto.Query.API.html#-/2"},
+        {"Ecto.Query.API.//2", "Function", "Ecto.Query.API.html#//2"},
+        {"Ecto.Query.API.!=/2", "Function", "Ecto.Query.API.html#!=/2"},
+        {"Ecto.Query.API.%3C/2", "Function", "Ecto.Query.API.html#%3C/2"},
+        {"Ecto.Query.API.%3C=/2", "Function", "Ecto.Query.API.html#%3C=/2"},
+        {"Ecto.Query.API.==/2", "Function", "Ecto.Query.API.html#==/2"},
+        {"Ecto.Query.API.%3E/2", "Function", "Ecto.Query.API.html#%3E/2"},
+        {"Ecto.Query.API.%3E=/2", "Function", "Ecto.Query.API.html#%3E=/2"},
+        {"Ecto.Query.API.ago/2", "Function", "Ecto.Query.API.html#ago/2"},
+        {"Ecto.Query.API.all/1", "Function", "Ecto.Query.API.html#all/1"},
+        {"Ecto.Query.API.and/2", "Function", "Ecto.Query.API.html#and/2"},
+        {"Ecto.Query.API.any/1", "Function", "Ecto.Query.API.html#any/1"},
+        {"Ecto.Query.API.as/1", "Function", "Ecto.Query.API.html#as/1"},
+        {"Ecto.Query.API.coalesce/2", "Function", "Ecto.Query.API.html#coalesce/2"},
+        {"Ecto.Query.API.count/0", "Function", "Ecto.Query.API.html#count/0"},
+        {"Ecto.Query.API.count/1", "Function", "Ecto.Query.API.html#count/1"},
+        {"Ecto.Query.API.count/2", "Function", "Ecto.Query.API.html#count/2"},
+        {"Ecto.Query.API.date_add/3", "Function", "Ecto.Query.API.html#date_add/3"},
+        {"Ecto.Query.API.datetime_add/3", "Function", "Ecto.Query.API.html#datetime_add/3"},
+        {"Ecto.Query.API.exists/1", "Function", "Ecto.Query.API.html#exists/1"},
+        {"Ecto.Query.API.field/2", "Function", "Ecto.Query.API.html#field/2"},
+        {"Ecto.Query.API.filter/2", "Function", "Ecto.Query.API.html#filter/2"},
+        {"Ecto.Query.API.fragment/1", "Function", "Ecto.Query.API.html#fragment/1"},
+        {"Ecto.Query.API.from_now/2", "Function", "Ecto.Query.API.html#from_now/2"},
+        {"Ecto.Query.API.ilike/2", "Function", "Ecto.Query.API.html#ilike/2"},
+        {"Ecto.Query.API.in/2", "Function", "Ecto.Query.API.html#in/2"},
+        {"Ecto.Query.API.is_nil/1", "Function", "Ecto.Query.API.html#is_nil/1"},
+        {"Ecto.Query.API.json_extract_path/2", "Function",
+         "Ecto.Query.API.html#json_extract_path/2"},
+        {"Ecto.Query.API.like/2", "Function", "Ecto.Query.API.html#like/2"},
+        {"Ecto.Query.API.literal/1", "Function", "Ecto.Query.API.html#literal/1"},
+        {"Ecto.Query.API.map/2", "Function", "Ecto.Query.API.html#map/2"},
+        {"Ecto.Query.API.max/1", "Function", "Ecto.Query.API.html#max/1"},
+        {"Ecto.Query.API.merge/2", "Function", "Ecto.Query.API.html#merge/2"},
+        {"Ecto.Query.API.min/1", "Function", "Ecto.Query.API.html#min/1"},
+        {"Ecto.Query.API.not/1", "Function", "Ecto.Query.API.html#not/1"},
+        {"Ecto.Query.API.or/2", "Function", "Ecto.Query.API.html#or/2"},
+        {"Ecto.Query.API.parent_as/1", "Function", "Ecto.Query.API.html#parent_as/1"},
+        {"Ecto.Query.API.selected_as/1", "Function", "Ecto.Query.API.html#selected_as/1"},
+        {"Ecto.Query.API.selected_as/2", "Function", "Ecto.Query.API.html#selected_as/2"},
+        {"Ecto.Query.API.splice/1", "Function", "Ecto.Query.API.html#splice/1"},
+        {"Ecto.Query.API.struct/2", "Function", "Ecto.Query.API.html#struct/2"},
+        {"Ecto.Query.API.sum/1", "Function", "Ecto.Query.API.html#sum/1"},
+        {"Ecto.Query.API.type/2", "Function", "Ecto.Query.API.html#type/2"},
+        {"Ecto.Query.API.values/2", "Function", "Ecto.Query.API.html#values/2"}
       ]
-    },
+    }
   }
 
   # Split between fixtures specs & html filename
@@ -98,14 +147,12 @@ defmodule DocsetApi.FileParserTest do
             |> File.read!()
             |> Floki.parse_document()
 
-          # Tally the states by sending them to the `:test` process to
-          # be received and asserted against.
-          callback = fn name, type, path ->
-            dbg({name, type, path})
+          FileParser.parse_zeal_navigation(html, doc, fn name, type, path ->
+            # dbg({name, type, path})
+            # Tally the states by sending them to the `:test` process to
+            # be received and asserted against.
             send(:test, {:called_back, name, type, path})
-          end
-
-          FileParser.parse_zeal_navigation(html, doc, callback)
+          end)
 
           for {name, type, path} <- specs[:callbacks] do
             assert_receive {:called_back, ^name, ^type, ^path}

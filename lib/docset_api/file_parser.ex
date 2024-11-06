@@ -35,17 +35,17 @@ defmodule DocsetApi.FileParser do
 
       # Function
       "Function" => %{
-        type: :inside_file,
+        type: :inline,
 
         # The unique identifier for the function we are recording. It
         # should contain the entire namespace.
-        name: &("#{&1}.#{&2}"),
+        name: &"#{&1}.#{&2}",
 
         # A function which will find function IDs on the html tree (it includes arity)
-        finder: &(Floki.attribute(Floki.find(&1, "#functions .detail"), "id")),
+        finder: &Floki.attribute(Floki.find(&1, "#functions .detail"), "id"),
 
         # The relative path to the content to navigate to
-        content_selector: &("#{&1}##{&2}")
+        content_selector: &"#{&1}##{&2}"
       },
 
       # Guide
@@ -58,8 +58,9 @@ defmodule DocsetApi.FileParser do
 
         # This function is used to check if a page "is a guide" or "is
         # a module".
-        predicate: fn(html) ->
+        predicate: fn html ->
           body_tag = Floki.find(html, "body")
+
           class_items =
             Floki.attribute(body_tag, "class")
             |> Enum.map(&String.split(&1, " "))
@@ -67,22 +68,21 @@ defmodule DocsetApi.FileParser do
           "extras" in Floki.attribute(body_tag, "data-type") and
             "page-extra" in class_items
         end,
-        content_selector: &("#{&1}#content")
+        content_selector: &"#{&1}#content"
       },
-  
+
       # Hook
       # Instance
       # Instruction
 
-      # Interface
-      #
       # Obviously an interface is not a behaviour, but it's close
       # enough to continue on, and I can see about having behaviours
       # added later.
       "Interface" => %{
         type: :whole_file,
-        predicate: fn(html) ->
+        predicate: fn html ->
           body_tag = Floki.find(html, "body")
+
           class_items =
             Floki.attribute(body_tag, "class")
             |> Enum.flat_map(&String.split(&1, " "))
@@ -90,13 +90,13 @@ defmodule DocsetApi.FileParser do
           "modules" in Floki.attribute(body_tag, "data-type") and
             "page-behaviour" in class_items
         end,
-        finder: fn(html) ->
+        finder: fn html ->
           Floki.find(html, "div#top-content span")
-          |> List.last
-          |> Floki.text
-          |> String.trim
+          |> List.last()
+          |> Floki.text()
+          |> String.trim()
         end,
-        content_selector: &("#{&1}#content")
+        content_selector: &"#{&1}#content"
       },
       # Keyword
       # Library
@@ -105,21 +105,25 @@ defmodule DocsetApi.FileParser do
       # Method
       # Mixin
       # Modifier
-      # Module
       "Module" => %{
         type: :whole_file,
-        predicate: fn(html) ->
+        predicate: fn html ->
           body_tag = Floki.find(html, "body")
+
+          class_items =
+            Floki.attribute(body_tag, "class")
+            |> Enum.flat_map(&String.split(&1, " "))
+
           "modules" in Floki.attribute(body_tag, "data-type") and
-            "page-module" in Floki.attribute(body_tag, "class")
+            "page-module" in class_items
         end,
-        finder: fn(html) ->
+        finder: fn html ->
           Floki.find(html, "div#top-content span")
-          |> List.last
-          |> Floki.text
-          |> String.trim
+          |> Enum.at(1)
+          |> Floki.text()
+          |> String.trim()
         end,
-        content_selector: &("#{&1}#content")
+        content_selector: &"#{&1}#content"
       },
       # Namespace
       # Notation
@@ -150,19 +154,18 @@ defmodule DocsetApi.FileParser do
       # Test
       # Trait
 
-      # Type
       "Type" => %{
-        type: :inside_file,
+        type: :inline,
 
         # The unique identifier for the function we are recording. It
         # should contain the entire namespace.
-        name: &("#{&1}.#{&2}"),
+        name: &"#{&1}.#{&2}",
 
         # A function which will find function IDs on the html tree
-        finder: &(Floki.attribute(Floki.find(&1, ".types-list .detail"), "id")),
+        finder: &Floki.attribute(Floki.find(&1, ".types-list .detail"), "id"),
 
         # The relative path to the content to navigate to
-        content_selector: &("#{&1}##{&2}")
+        content_selector: &"#{&1}##{&2}"
       }
 
       # Union
@@ -172,76 +175,77 @@ defmodule DocsetApi.FileParser do
     }
   end
 
+  def parsers(type_filter) do
+    Enum.filter(parsers(), fn
+      {_key, %{type: ^type_filter}} -> true
+      _ -> false
+    end)
+  end
+
+  def parse_file_type(html, file_path, callback) do
+    # Determine "whole-file" type, and use that to define the namespace
+    parsers(:whole_file)
+    # I wonder - it might be necessary to allow multiple for
+    # whole_file types per file. Leaving this comment here just to
+    # remind me where to adjust this if necessary.
+    |> Enum.find_value(fn {type, parser} ->
+      Logger.debug("Checking if file is of type #{type}")
+      # if file_path == "Ecto.Query.API.html", do: IEx.pry()
+
+      if parser.predicate.(html) do
+        name = parser.finder.(html)
+        file_path = parser.content_selector.(file_path)
+
+        # Trigger the callback against this matched file type, so that
+        # it's added to the database.
+        callback.(name, type, file_path)
+
+        # Return the detection state
+        {name, type, file_path}
+      else
+        # Keep searching
+        false
+      end
+    end)
+  end
+
+  def parse_inside_file(html, namespace, file_path, callback) do
+    # Loop through the inline parsers
+    for {type, parser} <- parsers(:inline) do
+      Logger.debug("Looking for #{type} types")
+      # Fetch the module associated with this file
+      #
+      # TODO: Cache this, probably, since the module:function
+      #       ratio will be highly skewed
+      if namespace == nil do
+        raise """
+            Could not find namespace for a #{file_path}. This is probably a
+            bug?
+        """
+      end
+
+      for id <- parser.finder.(html) do
+        # IO.inspect(id, label: "ID")
+        # IO.inspect(namespace, label: "Namespace")
+        # IEx.pry
+        callback.(
+          parser.name.(namespace, id),
+          type,
+          parser.content_selector.(file_path, id)
+        )
+      end
+
+      :ok
+    end
+  end
+
   @spec parse_zeal_navigation(Floki.html_tree(), binary(), fun()) :: Floki.html_tree()
   def parse_zeal_navigation(html, file_path, callback) when is_function(callback) do
-    for {type, parser} <- parsers() do
-      Logger.debug "Looking for #{type} types"
-      case type do
-        symbol when symbol in ~w[Module Interface] ->
-          symbol == "Interface" && IEx.pry
-          if parser.predicate.(html) do
-            callback.(
-              parser.finder.(html),
-              type,
-              parser.content_selector.(file_path)
-            )
-          else
-            Logger.warning "Couldn't find evidence of #{type} in the file, moving on"
-          end
-
-        # Inline Types?
-        symbol when symbol in ~w[Function Type] ->
-
-          # Fetch the module associated with this file
-          #
-          # TODO: Cache this, probably, since the module:function
-          #       ratio will be highly skewed
-          {:ok, module_parser} = Map.fetch(parsers(), "Module")
-          module = module_parser.finder.(html)
-
-          if module == nil do
-            raise """
-            Could not find module for a function. This is probably a
-            bug?
-            """
-          end
-
-          for id <- parser.finder.(html) do
-            callback.(
-              parser.name.(module, id),
-              type,
-              parser.content_selector.(file_path, id)
-            )
-          end
-        _ ->
-          Logger.warning "Unimplemented: #{type}. Skipping."
-      end
+    case parse_file_type(html, file_path, callback) do
+      {namespace, _type, _file_path} -> parse_inside_file(html, namespace, file_path, callback)
+      nil -> raise "Could not categorise #{file_path}. This is a bug."
+      other -> IEx.pry
     end
-
-
-    # cond do
-    #   module != "" and not is_guide and not is_exception and not is_protocol ->
-    #     callback.(module, "Module", "#{file_path}#content")
-
-    #     for function <- parse_functions(html) do
-    #       callback.("#{module}.#{function}", "Function", "#{file_path}##{function}")
-    #     end
-
-    #     for macro <- parse_macros(html) do
-    #       callback.("#{module}.#{macro}", "Macro", "#{file_path}##{macro}")
-    #     end
-
-    #     for "c:" <> callback_id <- parse_callbacks(html) do
-    #       callback.("#{module}.#{callback_id}", "Callback", "#{file_path}#c:#{callback_id}")
-    #     end
-
-    #     for "t:" <> type <- parse_types(html) do
-    #       callback.("#{module}.#{type}", "Type", "#{file_path}#t:#{type}")
-    #     end
-
-    #   true ->
-    #     :ok
-    # end
 
     html
   end
