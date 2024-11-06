@@ -78,7 +78,7 @@ defmodule DocsetApi.FileParser do
         is_type?: fn
           {:exdoc, %Version{major: 0, minor: m, patch: _}} when m > 25 ->
             &exdoc_is_type?(&1, "exception")
-          {:exdoc, %Version{major: 0, minor: 25, patch: _}} ->
+          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m <= 25 and m >= 23 ->
             &exdoc_25_is_type?(&1, "exception")
         end,
         # What is the ID of this thing?
@@ -124,7 +124,7 @@ defmodule DocsetApi.FileParser do
               "extras" in Floki.attribute(body_tag, "data-type") and
                 MapSet.size(class_intersection) > 0
             end
-          {:exdoc, %Version{major: 0, minor: 25, patch: _}} ->
+          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m <= 25 and m >= 23 ->
             fn html ->
               # FIXME: Is this specific enough?
               body_tag = Floki.find(html, "body")
@@ -147,7 +147,7 @@ defmodule DocsetApi.FileParser do
         is_type?: fn
           {:exdoc, %Version{major: 0, minor: m, patch: _}} when m > 25 ->
             &exdoc_is_type?(&1, "behaviour")
-          {:exdoc, %Version{major: 0, minor: 25, patch: _}} ->
+          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m <= 25 and m >= 23 ->
             &exdoc_25_is_type?(&1, "behaviour")
         end,
         id: fn
@@ -163,7 +163,7 @@ defmodule DocsetApi.FileParser do
         is_type?: fn
           {:exdoc, %Version{major: 0, minor: m, patch: _}} when m > 25 ->
             &exdoc_is_type?(&1, "module")
-          {:exdoc, %Version{major: 0, minor: 25, patch: _}} ->
+          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m <= 25 and m >= 23 ->
             &exdoc_25_is_type?(&1, "module")
         end,
         id: fn
@@ -181,7 +181,7 @@ defmodule DocsetApi.FileParser do
         is_type?: fn
           {:exdoc, %Version{major: 0, minor: m, patch: _}} when m > 25 ->
             &exdoc_is_type?(&1, "task")
-          {:exdoc, %Version{major: 0, minor: 25, patch: _}} ->
+          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m <= 25 and m >= 23 ->
             &exdoc_25_is_type?(&1, "task")
         end,
         id: fn
@@ -197,7 +197,7 @@ defmodule DocsetApi.FileParser do
         is_type?: fn
           {:exdoc, %Version{major: 0, minor: m, patch: _}} when m > 25 ->
             &exdoc_is_type?(&1, "protocol")
-          {:exdoc, %Version{major: 0, minor: 25, patch: _}} ->
+          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m <= 25 and m >= 23 ->
             &exdoc_25_is_type?(&1, "protocol")
         end,
         id: fn
