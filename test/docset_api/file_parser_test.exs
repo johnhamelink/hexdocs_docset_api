@@ -98,7 +98,6 @@ defmodule DocsetApi.FileParserTest do
     "exdoc-0.34.0-ecto-3.12.4--Ecto.QueryError.html" => %{
       callbacks: [{"Ecto.QueryError", "Exception", "Ecto.QueryError.html#content"}]
     },
-
     # This is not a guide, but a "cheatsheet", which we put in the guide category.
     "exdoc-0.34.0-ecto-3.12.4--crud.html" => %{
       callbacks: [{"Basic CRUD", "Guide", "crud.html#content"}]

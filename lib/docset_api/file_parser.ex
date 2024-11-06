@@ -173,7 +173,31 @@ defmodule DocsetApi.FileParser do
       # Package
       # Parameter
       # Plugin
+
       # Procedure
+      # We'll use Procedure for Tasks
+      "Procedure" => %{
+        type: :whole_file,
+        predicate: fn html ->
+          body_tag = Floki.find(html, "body")
+
+          class_items =
+            Floki.attribute(body_tag, "class")
+            |> Enum.flat_map(&String.split(&1, " "))
+
+          "tasks" in Floki.attribute(body_tag, "data-type") and
+            "page-task" in class_items
+        end,
+        finder: fn html ->
+          Floki.find(html, "title")
+          |> Floki.text
+          |> String.trim()
+          |> String.split(" — ")
+          |> List.first
+        end,
+        content_selector: &"#{&1}#content"
+      },
+
       # Property
 
       # Protocol
