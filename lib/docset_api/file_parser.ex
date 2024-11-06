@@ -2,6 +2,10 @@ defmodule DocsetApi.FileParser do
   require Logger
   require IEx
 
+  @banned_files [
+     "404.html",
+     "search.html"
+   ]
 
   defp whole_file_finder(html) do
     Floki.find(html, "title")
@@ -330,17 +334,21 @@ defmodule DocsetApi.FileParser do
   def parse(html, file_path, callback) when is_function(callback) do
     doc = identify_documenting_tool_version(html)
 
-    case parse_file_type(html, doc, file_path, callback) do
-      {namespace, _type, _file_path} ->
-        parse_inside_file(html, doc, namespace, file_path, callback)
+    if file_path not in @banned_files do
+      case parse_file_type(html, doc, file_path, callback) do
+        {namespace, _type, _file_path} ->
+          parse_inside_file(html, doc, namespace, file_path, callback)
 
-      nil ->
-        Logger.warning(
-          "Could not categorise #{file_path}. If this is surprising then consider it a bug. Moving on."
-        )
+        nil ->
+          Logger.warning(
+            "Could not categorise #{file_path}. If this is surprising then consider it a bug. Moving on."
+          )
 
-      other ->
-        Logger.warning("Could not categorise response #{inspect(other)}. This is a bug.")
+        other ->
+          Logger.warning("Could not categorise response #{inspect(other)}. This is a bug.")
+      end
+    else
+        Logger.warning("Ignoring #{file_path} since it's a banned file.")
     end
 
     html

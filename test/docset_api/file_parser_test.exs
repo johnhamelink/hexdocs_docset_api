@@ -179,6 +179,10 @@ defmodule DocsetApi.FileParserTest do
       callbacks: [
         {"Changelog", "Guide", "changelog.html#content"}
       ]
+    },
+    "exdoc-0.25.5-httpoison-2.2.1--404.html" => %{
+      # We expect 404 to be skipped because it's a "banned file"
+      callbacks: []
     }
   }
 
