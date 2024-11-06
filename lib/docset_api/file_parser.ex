@@ -2,7 +2,7 @@ defmodule DocsetApi.FileParser do
   require Logger
   require IEx
 
-  def whole_file_finder(html) do
+  defp whole_file_finder(html) do
     Floki.find(html, "title")
     |> Floki.text()
     |> String.trim()
@@ -10,231 +10,242 @@ defmodule DocsetApi.FileParser do
     |> List.first()
   end
 
+  # Other available types to chose from:
+  #
+  # Annotation Attribute Binding Builtin Callback Category Class
+  # Command Component Constant Constructor Define Delegate Diagram
+  # Directive Element Entry Enum Environment Error Event Extension
+  # Field File Filter Framework Global Hook Instance Instruction
+  # Keyword Library Literal Macro Method Mixin Modifier Namespace
+  # Notation Object Operator Option Package Parameter Plugin
+  # Property Provider Provisioner Query Record Resource Sample
+  # Section Service Setting Shortcut Statement Struct Style
+  # Subroutine Tag Test Trait Union Value Variable Word
+  #
+  # Taken from https://kapeli.com/docsets#supportedentrytypes
   def parsers do
+
     %{
-      # Annotation
-      # Attribute
-      # Binding
-      # Builtin
-      # Callback
-      # Category
-      # Class
-      # Command
-      # Component
-      # Constant
-      # Constructor
-      # Define
-      # Delegate
-      # Diagram
-      # Directive
-      # Element
-      # Entry
-      # Enum
-      # Environment
-      # Error
-      # Event
-      # Exception
       "Exception" => %{
         type: :whole_file,
-        # finder: fn html ->
-        #   IEx.pry
-        #   Floki.attribute(Floki.find(html, ""), "id")
-        # end,
+        # Determines whether the file in question is of
+        # type "exception" or not.
+        is_type?: fn
+          {:exdoc, _version} ->
+            fn html ->
+              body_tag = Floki.find(html, "body")
 
-        # This function is used to check if a page "is a guide" or "is
-        # a module".
-        predicate: fn html ->
-          body_tag = Floki.find(html, "body")
+              class_items =
+                Floki.attribute(body_tag, "class")
+                |> Enum.flat_map(&String.split(&1, " "))
 
-          class_items =
-            Floki.attribute(body_tag, "class")
-            |> Enum.flat_map(&String.split(&1, " "))
-
-          "modules" in Floki.attribute(body_tag, "data-type") and
-            "page-exception" in class_items
+              "modules" in Floki.attribute(body_tag, "data-type") and
+                "page-exception" in class_items
+            end
         end,
-        finder: &whole_file_finder/1,
-        content_selector: &"#{&1}#content"
+        # What is the ID of this thing?
+        id: fn
+          {:exdoc, _version} -> &whole_file_finder(&1)
+        end,
+        # Where is the content we wish to keep?
+        path: fn
+          {:exdoc, _version} -> &"#{&1}#content"
+        end
       },
 
-      # Extension
-      # Field
-      # File
-      # Filter
-      # Framework
-      # Global
-
-      # Function
       "Function" => %{
         type: :inline,
 
         # The unique identifier for the function we are recording. It
         # should contain the entire namespace.
-        name: &"#{&1}.#{&2}",
+        name: fn {:exdoc, _} -> &"#{&1}.#{&2}" end,
 
         # A function which will find function IDs on the html tree (it includes arity)
-        finder: &Floki.attribute(Floki.find(&1, "#functions .detail"), "id"),
+        id: fn {:exdoc, _} -> &Floki.attribute(Floki.find(&1, "#functions .detail"), "id") end,
 
         # The relative path to the content to navigate to
-        content_selector: &"#{&1}##{&2}"
+        path: fn {:exdoc, _} -> &"#{&1}##{&2}" end
       },
 
-      # Guide
       "Guide" => %{
         type: :whole_file,
-        # finder: fn html ->
-        #   IEx.pry
-        #   Floki.attribute(Floki.find(html, ""), "id")
-        # end,
+        is_type?: fn
+          {:exdoc, _} ->
+            fn html ->
+              body_tag = Floki.find(html, "body")
 
-        # This function is used to check if a page "is a guide" or "is
-        # a module".
-        predicate: fn html ->
-          body_tag = Floki.find(html, "body")
+              class_items =
+                Floki.attribute(body_tag, "class")
+                |> Enum.flat_map(&String.split(&1, " "))
+                |> MapSet.new()
 
-          class_items =
-            Floki.attribute(body_tag, "class")
-            |> Enum.flat_map(&String.split(&1, " "))
-            |> MapSet.new()
+              class_intersection =
+                MapSet.new(["page-extra", "page-cheatmd"])
+                |> MapSet.intersection(class_items)
 
-          class_intersection =
-            MapSet.new(["page-extra", "page-cheatmd"])
-            |> MapSet.intersection(class_items)
-
-          "extras" in Floki.attribute(body_tag, "data-type") and
-            MapSet.size(class_intersection) > 0
+              "extras" in Floki.attribute(body_tag, "data-type") and
+                MapSet.size(class_intersection) > 0
+            end
         end,
-        finder: &whole_file_finder/1,
-        content_selector: &"#{&1}#content"
+        id: fn
+          {:exdoc, _} -> &whole_file_finder/1
+        end,
+        path: fn
+          {:exdoc, _} -> &"#{&1}#content"
+        end
       },
-
-      # Hook
-      # Instance
-      # Instruction
 
       # Obviously an interface is not a behaviour, but it's close
       # enough to continue on, and I can see about having behaviours
       # added later.
       "Interface" => %{
         type: :whole_file,
-        predicate: fn html ->
-          body_tag = Floki.find(html, "body")
+        is_type?: fn
+          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m > 25 ->
+            fn html ->
+              body_tag = Floki.find(html, "body")
 
-          class_items =
-            Floki.attribute(body_tag, "class")
-            |> Enum.flat_map(&String.split(&1, " "))
+              class_items =
+                Floki.attribute(body_tag, "class")
+                |> Enum.flat_map(&String.split(&1, " "))
 
-          "modules" in Floki.attribute(body_tag, "data-type") and
-            "page-behaviour" in class_items
+              "modules" in Floki.attribute(body_tag, "data-type") and
+                "page-behaviour" in class_items
+            end
+          {:exdoc, %Version{major: 0, minor: 25, patch: _}} ->
+            fn html ->
+              body_tag = Floki.find(html, "body")
+
+              module_type =
+                Floki.find(html, "div.content-inner>h1>small")
+                |> List.first
+                |> Floki.text
+                |> String.trim
+
+              "modules" in Floki.attribute(body_tag, "data-type") and
+                module_type == "behaviour"
+            end
         end,
-        finder: &whole_file_finder/1,
-        content_selector: &"#{&1}#content"
+        id: fn
+          {:exdoc, _} -> &whole_file_finder/1
+        end,
+        path: fn
+          {:exdoc, _} -> &"#{&1}#content"
+        end
       },
-      # Keyword
-      # Library
-      # Literal
-      # Macro
-      # Method
-      # Mixin
-      # Modifier
+
       "Module" => %{
         type: :whole_file,
-        predicate: fn html ->
-          body_tag = Floki.find(html, "body")
+        is_type?: fn
+          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m > 25 -> fn html ->
+            body_tag = Floki.find(html, "body")
 
-          class_items =
-            Floki.attribute(body_tag, "class")
-            |> Enum.flat_map(&String.split(&1, " "))
+            class_items =
+              Floki.attribute(body_tag, "class")
+              |> Enum.flat_map(&String.split(&1, " "))
 
-          "modules" in Floki.attribute(body_tag, "data-type") and
-            "page-module" in class_items
+            "modules" in Floki.attribute(body_tag, "data-type") and
+              "page-module" in class_items
+          end
+          {:exdoc, %Version{major: 0, minor: 25, patch: _}} ->
+            fn html ->
+              body_tag = Floki.find(html, "body")
+
+              module_type =
+                Floki.find(html, "div.content-inner>h1>small")
+                |> List.first
+                |> Floki.text
+                |> String.trim
+
+              "modules" in Floki.attribute(body_tag, "data-type") and
+                module_type not in ~w[behaviour]
+            end
         end,
-        finder: &whole_file_finder/1,
-        content_selector: &"#{&1}#content"
+        id: fn
+          {:exdoc, _} -> &whole_file_finder/1
+        end,
+        path: fn
+          {:exdoc, _} -> &"#{&1}#content"
+        end
       },
-      # Namespace
-      # Notation
-      # Object
-      # Operator
-      # Option
-      # Package
-      # Parameter
-      # Plugin
-
-      # Procedure
-      # We'll use Procedure for Tasks
+      
+      # FIXME: We'll use Procedure for Tasks since Tasks isn't
+      #        available
       "Procedure" => %{
         type: :whole_file,
-        predicate: fn html ->
-          body_tag = Floki.find(html, "body")
+        is_type?: fn
+          {:exdoc, _} -> fn html ->
+            body_tag = Floki.find(html, "body")
 
-          class_items =
-            Floki.attribute(body_tag, "class")
-            |> Enum.flat_map(&String.split(&1, " "))
+            class_items =
+              Floki.attribute(body_tag, "class")
+              |> Enum.flat_map(&String.split(&1, " "))
 
-          "tasks" in Floki.attribute(body_tag, "data-type") and
-            "page-task" in class_items
+            "tasks" in Floki.attribute(body_tag, "data-type") and
+              "page-task" in class_items
+          end
         end,
-        finder: &whole_file_finder/1,
-        content_selector: &"#{&1}#content"
+        id: fn
+          {:exdoc, _} -> &whole_file_finder/1
+        end,
+        path: fn
+          {:exdoc, _} -> &"#{&1}#content"
+        end
       },
 
-      # Property
-
-      # Protocol
       "Protocol" => %{
         type: :whole_file,
-        predicate: fn html ->
-          body_tag = Floki.find(html, "body")
+        is_type?: fn
+          {:exdoc, _} -> fn html ->
+            body_tag = Floki.find(html, "body")
 
-          class_items =
-            Floki.attribute(body_tag, "class")
-            |> Enum.flat_map(&String.split(&1, " "))
+            class_items =
+              Floki.attribute(body_tag, "class")
+              |> Enum.flat_map(&String.split(&1, " "))
 
-          "modules" in Floki.attribute(body_tag, "data-type") and
-            "page-protocol" in class_items
+            "modules" in Floki.attribute(body_tag, "data-type") and
+              "page-protocol" in class_items
+          end
         end,
-        finder: &whole_file_finder/1,
-        content_selector: &"#{&1}#content"
+        id: fn
+          {:exdoc, _} -> &whole_file_finder/1
+        end,
+        path: fn
+          {:exdoc, _} -> &"#{&1}#content"
+        end
       },
-
-      # Provider
-      # Provisioner
-      # Query
-      # Record
-      # Resource
-      # Sample
-      # Section
-      # Service
-      # Setting
-      # Shortcut
-      # Statement
-      # Struct
-      # Style
-      # Subroutine
-      # Tag
-      # Test
-      # Trait
 
       "Type" => %{
         type: :inline,
 
         # The unique identifier for the function we are recording. It
         # should contain the entire namespace.
-        name: &("#{&1}." <> String.replace_prefix(&2, "t:", "")),
+        name: fn
+          {:exdoc, _} -> &("#{&1}." <> String.replace_prefix(&2, "t:", ""))
+        end,
 
         # A function which will find function IDs on the html tree
-        finder: &Floki.attribute(Floki.find(&1, ".types-list .detail"), "id"),
+        id: fn
+          {:exdoc, _} ->  &Floki.attribute(Floki.find(&1, ".types-list .detail"), "id")
+        end,
 
         # The relative path to the content to navigate to
-        content_selector: &"#{&1}##{&2}"
+        path: fn
+          {:exdoc, _} -> &"#{&1}##{&2}"
+        end
       }
-
-      # Union
-      # Value
-      # Variable
-      # Word
     }
+  end
+
+  @spec identify_documenting_tool_version(Floki.html_tree()) :: {atom(), binary()}
+  def identify_documenting_tool_version(html) do
+    # Try various different
+    Enum.find_value(
+      [
+        fn -> identify_check_for(:exdoc, html) end
+      ],
+      fn x -> x.() end
+    )
   end
 
   def parsers(type_filter) do
@@ -244,7 +255,7 @@ defmodule DocsetApi.FileParser do
     end)
   end
 
-  def parse_file_type(html, file_path, callback) do
+  def parse_file_type(html, doc, file_path, callback) do
     # Determine "whole-file" type, and use that to define the namespace
     parsers(:whole_file)
     # I wonder - it might be necessary to allow multiple for
@@ -254,9 +265,13 @@ defmodule DocsetApi.FileParser do
       Logger.debug("Checking if file is of type #{type}")
       # if file_path == "crud.html", do: IEx.pry()
 
-      if parser.predicate.(html) do
-        name = parser.finder.(html)
-        file_path = parser.content_selector.(file_path)
+      is_type? = parser.is_type?.(doc)
+      id = parser.id.(doc)
+      path = parser.path.(doc)
+
+      if is_type?.(html) do
+        name = id.(html)
+        file_path = path.(file_path)
 
         # Trigger the callback against this matched file type, so that
         # it's added to the database.
@@ -271,7 +286,7 @@ defmodule DocsetApi.FileParser do
     end)
   end
 
-  def parse_inside_file(html, namespace, file_path, callback) do
+  def parse_inside_file(html, doc, namespace, file_path, callback) do
     # Loop through the inline parsers
     for {type, parser} <- parsers(:inline) do
       Logger.debug("Looking for #{type} types")
@@ -286,14 +301,18 @@ defmodule DocsetApi.FileParser do
         """
       end
 
-      for id <- parser.finder.(html) do
+      id = parser.id.(doc)
+      name = parser.name.(doc)
+      path = parser.path.(doc)
+
+      for id <- id.(html) do
         # IO.inspect(id, label: "ID")
         # IO.inspect(namespace, label: "Namespace")
         # IEx.pry
         callback.(
-          parser.name.(namespace, id),
+          name.(namespace, id),
           type,
-          parser.content_selector.(file_path, id)
+          path.(file_path, id)
         )
       end
 
@@ -303,9 +322,11 @@ defmodule DocsetApi.FileParser do
 
   @spec parse(Floki.html_tree(), binary(), fun()) :: Floki.html_tree()
   def parse(html, file_path, callback) when is_function(callback) do
-    case parse_file_type(html, file_path, callback) do
+    doc = identify_documenting_tool_version(html)
+
+    case parse_file_type(html, doc, file_path, callback) do
       {namespace, _type, _file_path} ->
-        parse_inside_file(html, namespace, file_path, callback)
+        parse_inside_file(html, doc, namespace, file_path, callback)
 
       nil ->
         Logger.warning(
@@ -319,17 +340,6 @@ defmodule DocsetApi.FileParser do
     html
   end
 
-  @spec identify_documenting_tool_version(Floki.html_tree()) :: {atom(), binary()}
-  def identify_documenting_tool_version(html) do
-    # Try various different
-    Enum.find_value(
-      [
-        fn -> identify_check_for(:exdoc, html) end
-      ],
-      fn x -> x.() end
-    )
-  end
-
   def identify_check_for(:exdoc, html) do
     ["ExDoc", version] =
       Floki.find(html, "meta[name=\"generator\"]")
@@ -338,6 +348,6 @@ defmodule DocsetApi.FileParser do
       |> String.trim()
       |> String.split(" v")
 
-    {:exdoc, version}
+    {:exdoc, Version.parse!(version)}
   end
 end

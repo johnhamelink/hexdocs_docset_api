@@ -146,6 +146,26 @@ defmodule DocsetApi.FileParserTest do
         {"Jason.Encoder.opts/0", "Type", "Jason.Encoder.html#t:opts/0"},
         {"Jason.Encoder.t/0", "Type", "Jason.Encoder.html#t:t/0"}
       ]
+    },
+    "exdoc-0.25.5-httpoison-2.2.1--HTTPoison.AsyncChunk.html" => %{
+      callbacks: [
+        {"HTTPoison.AsyncChunk", "Module", "HTTPoison.AsyncChunk.html#content"},
+        {"HTTPoison.AsyncChunk.t/0", "Type", "HTTPoison.AsyncChunk.html#t:t/0"}
+      ]
+    },
+    "exdoc-0.25.5-httpoison-2.2.1--HTTPoison.Base.html" => %{
+      callbacks: [
+        {"HTTPoison.Base", "Interface", "HTTPoison.Base.html#content"},
+        {"HTTPoison.Base.maybe_process_form/1", "Function", "HTTPoison.Base.html#maybe_process_form/1"},
+        {"HTTPoison.Base.body/0", "Type", "HTTPoison.Base.html#t:body/0"},
+        {"HTTPoison.Base.headers/0", "Type", "HTTPoison.Base.html#t:headers/0"},
+        {"HTTPoison.Base.method/0", "Type", "HTTPoison.Base.html#t:method/0"},
+        {"HTTPoison.Base.options/0", "Type", "HTTPoison.Base.html#t:options/0"},
+        {"HTTPoison.Base.params/0", "Type", "HTTPoison.Base.html#t:params/0"},
+        {"HTTPoison.Base.request/0", "Type", "HTTPoison.Base.html#t:request/0"},
+        {"HTTPoison.Base.response/0", "Type", "HTTPoison.Base.html#t:response/0"},
+        {"HTTPoison.Base.url/0", "Type", "HTTPoison.Base.html#t:url/0"}
+      ]
     }
   }
 
@@ -200,16 +220,15 @@ defmodule DocsetApi.FileParserTest do
         # For each ExUnit version, build a test to ensure that it can be
         # identified correctly.
         test "[#{pkg} #{pkg_version}] [ID] " <> filename, %{
-          registered: %{fixture: %{doc: doc, fixture_filename: filename}}
+          registered: %{fixture: %{doc: {doc_n, doc_v}, fixture_filename: filename}}
         } do
           file_path = Path.join([File.cwd!(), "test/support/fixtures", filename])
-
           {:ok, html} =
             file_path
             |> File.read!()
             |> Floki.parse_document()
 
-          assert doc == FileParser.identify_documenting_tool_version(html)
+          assert {doc_n, Version.parse!(doc_v)} == FileParser.identify_documenting_tool_version(html)
         end
 
         # For each ExUnit version, build a suite of tests to
@@ -239,7 +258,16 @@ defmodule DocsetApi.FileParserTest do
             end)
 
           # Ensure we have categorised everything
-          assert !(logs =~ "Could not categorise")
+          if logs =~ "Could not categorise" do
+            raise """
+            There are fixtures which aren't being categorised by the
+            test, and so haven't been implemented correctly. This is a
+            bug.
+
+            #{logs}
+            """
+          end
+
 
           for {name, type, path} <- specs[:callbacks] do
             assert_receive {:called_back, ^name, ^type, ^path}
