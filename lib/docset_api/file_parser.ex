@@ -175,7 +175,29 @@ defmodule DocsetApi.FileParser do
       # Plugin
       # Procedure
       # Property
+
       # Protocol
+      "Protocol" => %{
+        type: :whole_file,
+        predicate: fn html ->
+          body_tag = Floki.find(html, "body")
+
+          class_items =
+            Floki.attribute(body_tag, "class")
+            |> Enum.flat_map(&String.split(&1, " "))
+
+          "modules" in Floki.attribute(body_tag, "data-type") and
+            "page-protocol" in class_items
+        end,
+        finder: fn html ->
+          Floki.find(html, "div#top-content span")
+          |> Enum.at(1)
+          |> Floki.text()
+          |> String.trim()
+        end,
+        content_selector: &"#{&1}#content"
+      },
+
       # Provider
       # Provisioner
       # Query
