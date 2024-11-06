@@ -2,6 +2,14 @@ defmodule DocsetApi.FileParser do
   require Logger
   require IEx
 
+  def whole_file_finder(html) do
+    Floki.find(html, "title")
+    |> Floki.text
+    |> String.trim()
+    |> String.split(" — ")
+    |> List.first
+  end
+
   def parsers do
     %{
       # Annotation
@@ -45,13 +53,7 @@ defmodule DocsetApi.FileParser do
           "modules" in Floki.attribute(body_tag, "data-type") and
             "page-exception" in class_items
         end,
-        finder: fn html ->
-          Floki.find(html, "title")
-          |> Floki.text
-          |> String.trim()
-          |> String.split(" — ")
-          |> List.first
-        end,
+        finder: &whole_file_finder/1,
         content_selector: &"#{&1}#content"
       },
 
@@ -102,13 +104,7 @@ defmodule DocsetApi.FileParser do
           "extras" in Floki.attribute(body_tag, "data-type")
                              and MapSet.size(class_intersection) > 0
         end,
-        finder: fn html ->
-          Floki.find(html, "title")
-          |> Floki.text
-          |> String.trim()
-          |> String.split(" — ")
-          |> List.first
-        end,
+        finder: &whole_file_finder/1,
         content_selector: &"#{&1}#content"
       },
 
@@ -131,13 +127,7 @@ defmodule DocsetApi.FileParser do
           "modules" in Floki.attribute(body_tag, "data-type") and
             "page-behaviour" in class_items
         end,
-        finder: fn html ->
-          Floki.find(html, "title")
-          |> Floki.text
-          |> String.trim()
-          |> String.split(" — ")
-          |> List.first
-        end,
+        finder: &whole_file_finder/1,
         content_selector: &"#{&1}#content"
       },
       # Keyword
@@ -159,13 +149,7 @@ defmodule DocsetApi.FileParser do
           "modules" in Floki.attribute(body_tag, "data-type") and
             "page-module" in class_items
         end,
-        finder: fn html ->
-          Floki.find(html, "title")
-          |> Floki.text
-          |> String.trim()
-          |> String.split(" — ")
-          |> List.first
-        end,
+        finder: &whole_file_finder/1,
         content_selector: &"#{&1}#content"
       },
       # Namespace
@@ -191,13 +175,7 @@ defmodule DocsetApi.FileParser do
           "tasks" in Floki.attribute(body_tag, "data-type") and
             "page-task" in class_items
         end,
-        finder: fn html ->
-          Floki.find(html, "title")
-          |> Floki.text
-          |> String.trim()
-          |> String.split(" — ")
-          |> List.first
-        end,
+        finder: &whole_file_finder/1,
         content_selector: &"#{&1}#content"
       },
 
@@ -216,12 +194,7 @@ defmodule DocsetApi.FileParser do
           "modules" in Floki.attribute(body_tag, "data-type") and
             "page-protocol" in class_items
         end,
-        finder: fn html ->
-          Floki.find(html, "div#top-content span")
-          |> Enum.at(1)
-          |> Floki.text()
-          |> String.trim()
-        end,
+        finder: &whole_file_finder/1,
         content_selector: &"#{&1}#content"
       },
 
