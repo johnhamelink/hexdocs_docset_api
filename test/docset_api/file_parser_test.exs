@@ -173,6 +173,11 @@ defmodule DocsetApi.FileParserTest do
         {"HTTPoison.Error.message/1", "Function", "HTTPoison.Error.html#message/1"},
         {"HTTPoison.Error.t/0", "Type", "HTTPoison.Error.html#t:t/0"}
       ]
+    },
+    "exdoc-0.25.5-httpoison-2.2.1--changelog.html" => %{
+      callbacks: [
+        {"Changelog", "Guide", "changelog.html#content"}
+      ]
     }
   }
 

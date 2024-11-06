@@ -93,7 +93,7 @@ defmodule DocsetApi.FileParser do
       "Guide" => %{
         type: :whole_file,
         is_type?: fn
-          {:exdoc, _} ->
+          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m > 25 ->
             fn html ->
               body_tag = Floki.find(html, "body")
 
@@ -108,6 +108,12 @@ defmodule DocsetApi.FileParser do
 
               "extras" in Floki.attribute(body_tag, "data-type") and
                 MapSet.size(class_intersection) > 0
+            end
+          {:exdoc, %Version{major: 0, minor: 25, patch: _}} ->
+            fn html ->
+              # FIXME: Is this specific enough?
+              body_tag = Floki.find(html, "body")
+              "extras" in Floki.attribute(body_tag, "data-type")
             end
         end,
         id: fn
