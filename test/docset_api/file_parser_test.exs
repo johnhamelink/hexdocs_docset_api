@@ -124,6 +124,14 @@ defmodule DocsetApi.FileParserTest do
         {"Jason.EncodeError.new/1", "Function", "Jason.EncodeError.html#new/1"},
         {"Jason.EncodeError.t/0", "Type", "Jason.EncodeError.html#t:t/0"}
       ]
+    },
+    "exdoc-0.28.6-jason-1.5.0.alpha2--Jason.OrderedObject.html" => %{
+      callbacks: [
+        {"Jason.OrderedObject", "Module", "Jason.OrderedObject.html#content"},
+        {"Jason.OrderedObject.__struct__/0", "Function", "Jason.OrderedObject.html#__struct__/0"},
+        {"Jason.OrderedObject.new/1", "Function", "Jason.OrderedObject.html#new/1"},
+        {"Jason.OrderedObject.t/0", "Type", "Jason.OrderedObject.html#t:t/0"}
+      ]
     }
   }
 
