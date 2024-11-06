@@ -1,0 +1,542 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="generator" content="ExDoc v0.34.2"/>
+    <meta name="project" content="Ecto v3.12.4"/>
+    <title>Ecto.Adapter — Ecto v3.12.4
+    </title>
+    <link rel="stylesheet" href="dist/html-elixir-F2VRIOKR.css"/>
+    <script src="dist/handlebars.runtime-NWIB6V2M.js">
+    </script>
+    <script src="dist/handlebars.templates-K7URE6B4.js">
+    </script>
+    <script src="dist/sidebar_items-2FBD157F.js">
+    </script>
+    <script src="docs_config.js">
+    </script>
+    <script async="async" src="dist/html-YIPIRHGU.js">
+    </script>
+  </head>
+  <body data-type="modules" class="page-behaviour sidebar-closed">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+    <div class="body-wrapper">
+      <nav id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-projectInfo">
+            <a href="Ecto.html" class="sidebar-projectImage">
+              <img src="assets/logo.png" alt="Ecto"/>
+            </a>
+            <div>
+              <a href="Ecto.html" class="sidebar-projectName" translate="no">
+Ecto
+              </a>
+              <div class="sidebar-projectVersion" translate="no">
+          v3.12.4
+              </div>
+            </div>
+          </div>
+          <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+            <li>
+            </li>
+            <li>
+            </li>
+            <li>
+            </li>
+          </ul>
+        </div>
+        <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+          <ul id="extras-full-list" class="full-list">
+          </ul>
+        </div>
+        <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden="hidden">
+          <ul id="modules-full-list" class="full-list">
+          </ul>
+        </div>
+        <div id="tasks-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="tasks-list-tab-button" hidden="hidden">
+          <ul id="tasks-full-list" class="full-list">
+          </ul>
+        </div>
+      </nav>
+      <main class="content">
+        <output role="status" id="toast">
+        </output>
+        <div id="content" class="content-inner">
+          <div class="top-search">
+            <div class="search-settings">
+              <form class="search-bar" action="search.html">
+                <label class="search-label">
+                  <span class="sr-only">Search documentation of Ecto
+                  </span>
+                  <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+                </label>
+              </form>
+              <div class="autocomplete">
+              </div>
+            </div>
+          </div>
+          <div id="top-content">
+            <h1>
+              <a href="https://github.com/elixir-ecto/ecto/blob/v3.12.4/lib/ecto/adapter.ex#L1" title="View Source" class="icon-action" rel="help"        {"Ecto.Adapter.lookup_meta/1", "Function", "Ecto.Adapter.html#lookup_meta/1"},
+        {"Ecto.Adapter.t:adapter_meta/0", "Type", "Ecto.Adapter.html#t:adapter_meta/0"},
+        {"Ecto.Adapter.t:t/0", "Type", "Ecto.Adapter.html#t:t/0"},
+        {"Ecto.Adapter", "Interface", "Ecto.Adapter.html#content"}
+>
+                <i class="ri-code-s-slash-line" aria-hidden="true">
+                </i>
+                <span class="sr-only">View Source
+                </span>
+              </a>
+              <span translate="no">Ecto.Adapter
+              </span>
+              <small>behaviour
+              </small>
+              <small class="app-vsn" translate="no">(Ecto v3.12.4)
+              </small>
+            </h1>
+            <section id="moduledoc">
+              <p>Specifies the minimal API required from adapters.
+              </p>
+            </section>
+          </div>
+          <section id="summary" class="details-list">
+            <h1 class="section-heading">
+              <a class="hover-link" href="#summary">
+                <i class="ri-link-m" aria-hidden="true">
+                </i>
+              </a>
+              <span class="text">Summary
+              </span>
+            </h1>
+            <div class="summary-types summary">
+              <h2>
+                <a href="#types">Types
+                </a>
+              </h2>
+              <div class="summary-row">
+                <div class="summary-signature">
+                  <a href="#t:adapter_meta/0" data-no-tooltip="data-no-tooltip" translate="no">adapter_meta()
+                  </a>
+                </div>
+                <div class="summary-synopsis">
+                  <p>The metadata returned by the adapter
+                    <a href="#c:init/1">
+                      <code class="inline">init/1
+                      </code>
+                    </a>.
+                  </p>
+                </div>
+              </div>
+              <div class="summary-row">
+                <div class="summary-signature">
+                  <a href="#t:t/0" data-no-tooltip="data-no-tooltip" translate="no">t()
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="summary-callbacks summary">
+              <h2>
+                <a href="#callbacks">Callbacks
+                </a>
+              </h2>
+              <div class="summary-row">
+                <div class="summary-signature">
+                  <a href="#c:__before_compile__/1" data-no-tooltip="data-no-tooltip" translate="no">__before_compile__(env)
+                  </a>
+                </div>
+                <div class="summary-synopsis">
+                  <p>The callback invoked in case the adapter needs to inject code.
+                  </p>
+                </div>
+              </div>
+              <div class="summary-row">
+                <div class="summary-signature">
+                  <a href="#c:checked_out?/1" data-no-tooltip="data-no-tooltip" translate="no">checked_out?(adapter_meta)
+                  </a>
+                </div>
+                <div class="summary-synopsis">
+                  <p>Returns true if a connection has been checked out.
+                  </p>
+                </div>
+              </div>
+              <div class="summary-row">
+                <div class="summary-signature">
+                  <a href="#c:checkout/3" data-no-tooltip="data-no-tooltip" translate="no">checkout(adapter_meta, config, function)
+                  </a>
+                </div>
+                <div class="summary-synopsis">
+                  <p>Checks out a connection for the duration of the given function.
+                  </p>
+                </div>
+              </div>
+              <div class="summary-row">
+                <div class="summary-signature">
+                  <a href="#c:dumpers/2" data-no-tooltip="data-no-tooltip" translate="no">dumpers(primitive_type, ecto_type)
+                  </a>
+                </div>
+                <div class="summary-synopsis">
+                  <p>Returns the dumpers for a given type.
+                  </p>
+                </div>
+              </div>
+              <div class="summary-row">
+                <div class="summary-signature">
+                  <a href="#c:ensure_all_started/2" data-no-tooltip="data-no-tooltip" translate="no">ensure_all_started(config, type)
+                  </a>
+                </div>
+                <div class="summary-synopsis">
+                  <p>Ensure all applications necessary to run the adapter are started.
+                  </p>
+                </div>
+              </div>
+              <div class="summary-row">
+                <div class="summary-signature">
+                  <a href="#c:init/1" data-no-tooltip="data-no-tooltip" translate="no">init(config)
+                  </a>
+                </div>
+                <div class="summary-synopsis">
+                  <p>Initializes the adapter supervision tree by returning the children and adapter metadata.
+                  </p>
+                </div>
+              </div>
+              <div class="summary-row">
+                <div class="summary-signature">
+                  <a href="#c:loaders/2" data-no-tooltip="data-no-tooltip" translate="no">loaders(primitive_type, ecto_type)
+                  </a>
+                </div>
+                <div class="summary-synopsis">
+                  <p>Returns the loaders for a given type.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="summary-functions summary">
+              <h2>
+                <a href="#functions">Functions
+                </a>
+              </h2>
+              <div class="summary-row">
+                <div class="summary-signature">
+                  <a href="#lookup_meta/1" data-no-tooltip="data-no-tooltip" translate="no">lookup_meta(repo_name_or_pid)
+                  </a>
+                </div>
+                <div class="summary-synopsis">
+                  <p>Returns the adapter metadata from its
+                    <a href="#c:init/1">
+                      <code class="inline">init/1
+                      </code>
+                    </a> callback.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section id="types" class="details-list">
+            <h1 class="section-heading">
+              <a class="hover-link" href="#types">
+                <i class="ri-link-m" aria-hidden="true">
+                </i>
+              </a>
+              <span class="text">Types
+              </span>
+            </h1>
+            <div class="types-list">
+              <section class="detail" id="t:adapter_meta/0">
+                <div class="detail-header">
+                  <a href="#t:adapter_meta/0" class="detail-link" data-no-tooltip="data-no-tooltip" title="Link to this type">
+                    <i class="ri-link-m" aria-hidden="true">
+                    </i>
+                    <span class="sr-only">Link to this type
+                    </span>
+                  </a>
+                  <h1 class="signature" translate="no">adapter_meta()
+                  </h1>
+                  <a href="https://github.com/elixir-ecto/ecto/blob/v3.12.4/lib/ecto/adapter.ex#L18" class="icon-action" rel="help" title="View Source">
+                    <i class="ri-code-s-slash-line" aria-hidden="true">
+                    </i>
+                    <span class="sr-only">View Source
+                    </span>
+                  </a>
+                </div>
+                <section class="docstring">
+                  <div class="specs">
+                    <pre translate="no">
+                      <span class="attribute">@type
+                      </span> adapter_meta() :: %{
+                      optional(:stacktrace) =>
+                      <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean
+                      </a>(),
+                      optional(
+                      <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any
+                      </a>()) =>
+                      <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any
+                      </a>()
+                      }
+                    </pre>
+                  </div>
+                  <p>The metadata returned by the adapter
+                    <a href="#c:init/1">
+                      <code class="inline">init/1
+                      </code>
+                    </a>.
+                  </p>
+                  <p>It must be a map and Ecto itself will always inject
+                    two keys into the meta:
+                  </p>
+                  <ul>
+                    <li>the
+                      <code class="inline">:cache
+                      </code> key, which as ETS table that can be used as a cache (if available)
+                    </li>
+                    <li>the
+                      <code class="inline">:pid
+                      </code> key, which is the PID returned by the child spec returned in
+                      <a href="#c:init/1">
+                        <code class="inline">init/1
+                        </code>
+                      </a>
+                    </li>
+                  </ul>
+                </section>
+              </section>
+              <section class="detail" id="t:t/0">
+                <div class="detail-header">
+                  <a href="#t:t/0" class="detail-link" data-no-tooltip="data-no-tooltip" title="Link to this type">
+                    <i class="ri-link-m" aria-hidden="true">
+                    </i>
+                    <span class="sr-only">Link to this type
+                    </span>
+                  </a>
+                  <h1 class="signature" translate="no">t()
+                  </h1>
+                  <a href="https://github.com/elixir-ecto/ecto/blob/v3.12.4/lib/ecto/adapter.ex#L6" class="icon-action" rel="help" title="View Source">
+                    <i class="ri-code-s-slash-line" aria-hidden="true">
+                    </i>
+                    <span class="sr-only">View Source
+                    </span>
+                  </a>
+                </div>
+                <section class="docstring">
+                  <div class="specs">
+                    <pre translate="no">
+                      <span class="attribute">@type
+                      </span> t() ::
+                      <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module
+                      </a>()
+                    </pre>
+                  </div>
+                </section>
+              </section>
+            </div>
+          </section>
+          <section id="callbacks" class="details-list">
+            <h1 class="section-heading">
+              <a class="hover-link" href="#callbacks">
+                <i class="ri-link-m" aria-hidden="true">
+                </i>
+              </a>
+              <span class="text">Callbacks
+              </span>
+            </h1>
+            <div class="callbacks-list">
+              <section class="detail" id="c:__before_compile__/1">
+                <div class="detail-header">
+                  <a href="#c:__before_compile__/1" class="detail-link" data-no-tooltip="data-no-tooltip" title="Link to this macrocallback">
+                    <i class="ri-link-m" aria-hidden="true">
+                    </i>
+                    <span class="sr-only">Link to this macrocallback
+                    </span>
+                  </a>
+                  <h1 class="signature" translate="no">__before_compile__(env)
+                  </h1>
+                  <a href="https://github.com/elixir-ecto/ecto/blob/v3.12.4/lib/ecto/adapter.ex#L23" class="icon-action" rel="help" title="View Source">
+                    <i class="ri-code-s-slash-line" aria-hidden="true">
+                    </i>
+                    <span class="sr-only">View Source
+                    </span>
+                  </a>
+                </div>
+                <section class="docstring">
+                  <div class="specs">
+                    <pre translate="no">
+                      <span class="attribute">@macrocallback
+                      </span> __before_compile__(env ::
+                      <a href="https://hexdocs.pm/elixir/Macro.Env.html#t:t/0">Macro.Env.t
+                      </a>()) ::
+                      <a href="https://hexdocs.pm/elixir/Macro.html#t:t/0">Macro.t
+                      </a>()
+                    </pre>
+                  </div>
+                  <p>The callback invoked in case the adapter needs to inject code.
+                  </p>
+                </section>
+              </section>
+              <section class="detail" id="c:checked_out?/1">
+                <div class="detail-header">
+                  <a href="#c:checked_out?/1" class="detail-link" data-no-tooltip="data-no-tooltip" title="Link to this callback">
+                    <i class="ri-link-m" aria-hidden="true">
+                    </i>
+                    <span class="sr-only">Link to this callback
+                    </span>
+                  </a>
+                  <h1 class="signature" translate="no">checked_out?(adapter_meta)
+                  </h1>
+                  <a href="https://github.com/elixir-ecto/ecto/blob/v3.12.4/lib/ecto/adapter.ex#L69" class="icon-action" rel="help" title="View Source">
+                    <i class="ri-code-s-slash-line" aria-hidden="true">
+                    </i>
+                    <span class="sr-only">View Source
+                    </span>
+                  </a>
+                </div>
+                <section class="docstring">
+                  <div class="specs">
+                    <pre translate="no">
+                      <span class="attribute">@callback
+                      </span> checked_out?(
+                      <a href="#t:adapter_meta/0">adapter_meta
+                      </a>()) ::
+                      <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean
+                      </a>()
+                    </pre>
+                  </div>
+                  <p>Returns true if a connection has been checked out.
+                  </p>
+                </section>
+              </section>
+              <section class="detail" id="c:checkout/3">
+                <div class="detail-header">
+                  <a href="#c:checkout/3" class="detail-link" data-no-tooltip="data-no-tooltip" title="Link to this callback">
+                    <i class="ri-link-m" aria-hidden="true">
+                    </i>
+                    <span class="sr-only">Link to this callback
+                    </span>
+                  </a>
+                  <h1 class="signature" translate="no">checkout(adapter_meta, config, function)
+                  </h1>
+                  <a href="https://github.com/elixir-ecto/ecto/blob/v3.12.4/lib/ecto/adapter.ex#L64" class="icon-action" rel="help" title="View Source">
+                    <i class="ri-code-s-slash-line" aria-hidden="true">
+                    </i>
+                    <span class="sr-only">View Source
+                    </span>
+                  </a>
+                </div>
+                <section class="docstring">
+                  <div class="specs">
+                    <pre translate="no">
+                      <span class="attribute">@callback
+                      </span> checkout(
+                      <a href="#t:adapter_meta/0">adapter_meta
+                      </a>(), config ::
+                      <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t
+                      </a>(), (-> result)) :: result
+                      when result: var
+                    </pre>
+                  </div>
+                  <p>Checks out a connection for the duration of the given function.
+                  </p>
+                  <p>In case the adapter provides a pool, this guarantees all of the code
+                    inside the given
+                    <code class="inline">fun
+                    </code> runs against the same connection, which
+might improve performance by for instance allowing multiple related
+                    calls to the datastore to share cache information:
+                  </p>
+                  <pre>
+                    <code class="makeup elixir" translate="no">
+                      <span class="nc">Repo
+                      </span>
+                      <span class="o">.
+                      </span>
+                      <span class="n">checkout
+                      </span>
+                      <span class="p" data-group-id="1347631800-1">(
+                      </span>
+                      <span class="k" data-group-id="1347631800-2">fn
+                      </span>
+                      <span class="w">
+                      </span>
+                      <span class="o">->
+                      </span>
+                      <span class="w">
+                      </span>
+                      <span class="k">for
+                      </span>
+                      <span class="w">
+                      </span>
+                      <span class="bp">_
+                      </span>
+                      <span class="w">
+                      </span>
+                      <span class="o">
+                        <-</span><span class="w"></span><span class="mi">1</span><span class="o">..</span><span class="mi">100</span><span class="w"></span><span class="k" data-group-id="1347631800-3">do</span><span class="w"></span><span class="nc">Repo</span><span class="o">.</span><span class="n">insert!</span><span class="p" data-group-id="1347631800-4">(</span><span class="p" data-group-id="1347631800-5">%</span><span class="nc" data-group-id="1347631800-5">Post</span><span class="p" data-group-id="1347631800-5">{</span><span class="p" data-group-id="1347631800-5">}</span><span class="p" data-group-id="1347631800-4">)</span><span class="w"></span><span class="k" data-group-id="1347631800-3">end</span><span class="w"></span><span class="k" data-group-id="1347631800-2">end</span><span class="p" data-group-id="1347631800-1">)</span></code></pre><p>If the adapter does not provide a pool, just calling the passed function
+and returning its result are enough.</p><p>If the adapter provides a pool, it is supposed to "check out" one of the
+pool connections for the duration of the function call. Which connection
+is checked out is not passed to the calling function, so it should be done
+using a stateful method like using the current process' dictionary, process
+tracking, or some kind of other lookup method. Make sure that this stored
+connection is then used in the other callbacks implementations, such as
+<a href="Ecto.Adapter.Queryable.html"><code class="inline">Ecto.Adapter.Queryable</code></a> and <a href="Ecto.Adapter.Schema.html"><code class="inline">Ecto.Adapter.Schema</code></a>.</p></section></section><section class="detail" id="c:dumpers/2"><div class="detail-header"><a href="#c:dumpers/2" class="detail-link" data-no-tooltip="data-no-tooltip" title="Link to this callback"><i class="ri-link-m" aria-hidden="true"></i><span class="sr-only">Link to this callback</span></a><h1 class="signature" translate="no">dumpers(primitive_type, ecto_type)</h1><a href="https://github.com/elixir-ecto/ecto/blob/v3.12.4/lib/ecto/adapter.ex#L126" class="icon-action" rel="help" title="View Source"><i class="ri-code-s-slash-line" aria-hidden="true"></i><span class="sr-only">View Source</span></a></div><section class="docstring"><div class="specs"><pre translate="no"><span class="attribute">@callback</span> dumpers(primitive_type :: <a href="Ecto.Type.html#t:primitive/0">Ecto.Type.primitive</a>(), ecto_type :: <a href="Ecto.Type.html#t:t/0">Ecto.Type.t</a>()) ::
+  [
+    (<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>() -> {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()} | :error) | <a href="Ecto.Type.html#t:t/0">Ecto.Type.t</a>()
+  ]</pre></div><p>Returns the dumpers for a given type.</p><p>It receives the primitive type and the Ecto type (which may be
+primitive as well). It returns a list of dumpers with the given
+type usually at the beginning.</p><p>This allows developers to properly translate values coming from
+the Ecto into adapter ones. For example, if the database does not
+support booleans but instead returns 0 and 1 for them, you could
+add:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"></span><span class="nf">dumpers</span><span class="p" data-group-id="3828614240-1">(</span><span class="ss">:boolean</span><span class="p">,</span><span class="w"></span><span class="n">type</span><span class="p" data-group-id="3828614240-1">)</span><span class="p">,</span><span class="w"></span><span class="ss">do</span><span class="p">:</span><span class="w"></span><span class="p" data-group-id="3828614240-2">[</span><span class="n">type</span><span class="p">,</span><span class="w"></span><span class="o">&</span><span class="n">bool_encode</span><span class="o">/</span><span class="mi">1</span><span class="p" data-group-id="3828614240-2">]</span><span class="w"></span><span class="kd">def</span><span class="w"></span><span class="nf">dumpers</span><span class="p" data-group-id="3828614240-3">(</span><span class="c">_primitive</span><span class="p">,</span><span class="w"></span><span class="n">type</span><span class="p" data-group-id="3828614240-3">)</span><span class="p">,</span><span class="w"></span><span class="ss">do</span><span class="p">:</span><span class="w"></span><span class="p" data-group-id="3828614240-4">[</span><span class="n">type</span><span class="p" data-group-id="3828614240-4">]</span><span class="w"></span><span class="kd">defp</span><span class="w"></span><span class="nf">bool_encode</span><span class="p" data-group-id="3828614240-5">(</span><span class="no">false</span><span class="p" data-group-id="3828614240-5">)</span><span class="p">,</span><span class="w"></span><span class="ss">do</span><span class="p">:</span><span class="w"></span><span class="p" data-group-id="3828614240-6">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"></span><span class="mi">0</span><span class="p" data-group-id="3828614240-6">}</span><span class="w"></span><span class="kd">defp</span><span class="w"></span><span class="nf">bool_encode</span><span class="p" data-group-id="3828614240-7">(</span><span class="no">true</span><span class="p" data-group-id="3828614240-7">)</span><span class="p">,</span><span class="w"></span><span class="ss">do</span><span class="p">:</span><span class="w"></span><span class="p" data-group-id="3828614240-8">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"></span><span class="mi">1</span><span class="p" data-group-id="3828614240-8">}</span></code></pre><p>All adapters are required to implement a clause for :binary_id types,
+since they are adapter specific. If your adapter does not provide
+binary ids, you may simply use <a href="Ecto.UUID.html"><code class="inline">Ecto.UUID</code></a>:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"></span><span class="nf">dumpers</span><span class="p" data-group-id="1484648943-1">(</span><span class="ss">:binary_id</span><span class="p">,</span><span class="w"></span><span class="n">type</span><span class="p" data-group-id="1484648943-1">)</span><span class="p">,</span><span class="w"></span><span class="ss">do</span><span class="p">:</span><span class="w"></span><span class="p" data-group-id="1484648943-2">[</span><span class="n">type</span><span class="p">,</span><span class="w"></span><span class="nc">Ecto.UUID</span><span class="p" data-group-id="1484648943-2">]</span><span class="w"></span><span class="kd">def</span><span class="w"></span><span class="nf">dumpers</span><span class="p" data-group-id="1484648943-3">(</span><span class="c">_primitive</span><span class="p">,</span><span class="w"></span><span class="n">type</span><span class="p" data-group-id="1484648943-3">)</span><span class="p">,</span><span class="w"></span><span class="ss">do</span><span class="p">:</span><span class="w"></span><span class="p" data-group-id="1484648943-4">[</span><span class="n">type</span><span class="p" data-group-id="1484648943-4">]</span></code></pre></section></section><section class="detail" id="c:ensure_all_started/2"><div class="detail-header"><a href="#c:ensure_all_started/2" class="detail-link" data-no-tooltip="data-no-tooltip" title="Link to this callback"><i class="ri-link-m" aria-hidden="true"></i><span class="sr-only">Link to this callback</span></a><h1 class="signature" translate="no">ensure_all_started(config, type)</h1><a href="https://github.com/elixir-ecto/ecto/blob/v3.12.4/lib/ecto/adapter.ex#L28" class="icon-action" rel="help" title="View Source"><i class="ri-code-s-slash-line" aria-hidden="true"></i><span class="sr-only">View Source</span></a></div><section class="docstring"><div class="specs"><pre translate="no"><span class="attribute">@callback</span> ensure_all_started(
+  config :: <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>(),
+  type :: :permanent | :transient | :temporary
+) :: {:ok, [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()}</pre></div><p>Ensure all applications necessary to run the adapter are started.</p></section></section><section class="detail" id="c:init/1"><div class="detail-header"><a href="#c:init/1" class="detail-link" data-no-tooltip="data-no-tooltip" title="Link to this callback"><i class="ri-link-m" aria-hidden="true"></i><span class="sr-only">Link to this callback</span></a><h1 class="signature" translate="no">init(config)</h1><a href="https://github.com/elixir-ecto/ecto/blob/v3.12.4/lib/ecto/adapter.ex#L37" class="icon-action" rel="help" title="View Source"><i class="ri-code-s-slash-line" aria-hidden="true"></i><span class="sr-only">View Source</span></a></div><section class="docstring"><div class="specs"><pre translate="no"><span class="attribute">@callback</span> init(config :: <a href="https://hexdocs.pm/elixir/Keyword.html#t:t/0">Keyword.t</a>()) :: {:ok, <a href="https://www.erlang.org/doc/apps/stdlib/supervisor.html#t:child_spec/0">:supervisor.child_spec</a>(), <a href="#t:adapter_meta/0">adapter_meta</a>()}</pre></div><p>Initializes the adapter supervision tree by returning the children and adapter metadata.</p></section></section><section class="detail" id="c:loaders/2"><div class="detail-header"><a href="#c:loaders/2" class="detail-link" data-no-tooltip="data-no-tooltip" title="Link to this callback"><i class="ri-link-m" aria-hidden="true"></i><span class="sr-only">Link to this callback</span></a><h1 class="signature" translate="no">loaders(primitive_type, ecto_type)</h1><a href="https://github.com/elixir-ecto/ecto/blob/v3.12.4/lib/ecto/adapter.ex#L97" class="icon-action" rel="help" title="View Source"><i class="ri-code-s-slash-line" aria-hidden="true"></i><span class="sr-only">View Source</span></a></div><section class="docstring"><div class="specs"><pre translate="no"><span class="attribute">@callback</span> loaders(primitive_type :: <a href="Ecto.Type.html#t:primitive/0">Ecto.Type.primitive</a>(), ecto_type :: <a href="Ecto.Type.html#t:t/0">Ecto.Type.t</a>()) ::
+  [
+    (<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>() -> {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()} | :error) | <a href="Ecto.Type.html#t:t/0">Ecto.Type.t</a>()
+  ]</pre></div><p>Returns the loaders for a given type.</p><p>It receives the primitive type and the Ecto type (which may be
+primitive as well). It returns a list of loaders with the given
+type usually at the end.</p><p>This allows developers to properly translate values coming from
+the adapters into Ecto ones. For example, if the database does not
+support booleans but instead returns 0 and 1 for them, you could
+add:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"></span><span class="nf">loaders</span><span class="p" data-group-id="7625743796-1">(</span><span class="ss">:boolean</span><span class="p">,</span><span class="w"></span><span class="n">type</span><span class="p" data-group-id="7625743796-1">)</span><span class="p">,</span><span class="w"></span><span class="ss">do</span><span class="p">:</span><span class="w"></span><span class="p" data-group-id="7625743796-2">[</span><span class="o">&</span><span class="n">bool_decode</span><span class="o">/</span><span class="mi">1</span><span class="p">,</span><span class="w"></span><span class="n">type</span><span class="p" data-group-id="7625743796-2">]</span><span class="w"></span><span class="kd">def</span><span class="w"></span><span class="nf">loaders</span><span class="p" data-group-id="7625743796-3">(</span><span class="c">_primitive</span><span class="p">,</span><span class="w"></span><span class="n">type</span><span class="p" data-group-id="7625743796-3">)</span><span class="p">,</span><span class="w"></span><span class="ss">do</span><span class="p">:</span><span class="w"></span><span class="p" data-group-id="7625743796-4">[</span><span class="n">type</span><span class="p" data-group-id="7625743796-4">]</span><span class="w"></span><span class="kd">defp</span><span class="w"></span><span class="nf">bool_decode</span><span class="p" data-group-id="7625743796-5">(</span><span class="mi">0</span><span class="p" data-group-id="7625743796-5">)</span><span class="p">,</span><span class="w"></span><span class="ss">do</span><span class="p">:</span><span class="w"></span><span class="p" data-group-id="7625743796-6">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"></span><span class="no">false</span><span class="p" data-group-id="7625743796-6">}</span><span class="w"></span><span class="kd">defp</span><span class="w"></span><span class="nf">bool_decode</span><span class="p" data-group-id="7625743796-7">(</span><span class="mi">1</span><span class="p" data-group-id="7625743796-7">)</span><span class="p">,</span><span class="w"></span><span class="ss">do</span><span class="p">:</span><span class="w"></span><span class="p" data-group-id="7625743796-8">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"></span><span class="no">true</span><span class="p" data-group-id="7625743796-8">}</span></code></pre><p>All adapters are required to implement a clause for <code class="inline">:binary_id</code> types,
+since they are adapter specific. If your adapter does not provide binary
+ids, you may simply use <a href="Ecto.UUID.html"><code class="inline">Ecto.UUID</code></a>:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"></span><span class="nf">loaders</span><span class="p" data-group-id="6615952387-1">(</span><span class="ss">:binary_id</span><span class="p">,</span><span class="w"></span><span class="n">type</span><span class="p" data-group-id="6615952387-1">)</span><span class="p">,</span><span class="w"></span><span class="ss">do</span><span class="p">:</span><span class="w"></span><span class="p" data-group-id="6615952387-2">[</span><span class="nc">Ecto.UUID</span><span class="p">,</span><span class="w"></span><span class="n">type</span><span class="p" data-group-id="6615952387-2">]</span><span class="w"></span><span class="kd">def</span><span class="w"></span><span class="nf">loaders</span><span class="p" data-group-id="6615952387-3">(</span><span class="c">_primitive</span><span class="p">,</span><span class="w"></span><span class="n">type</span><span class="p" data-group-id="6615952387-3">)</span><span class="p">,</span><span class="w"></span><span class="ss">do</span><span class="p">:</span><span class="w"></span><span class="p" data-group-id="6615952387-4">[</span><span class="n">type</span><span class="p" data-group-id="6615952387-4">]</span></code></pre></section></section></div></section><section id="functions" class="details-list"><h1 class="section-heading"><a class="hover-link" href="#functions"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Functions</span></h1><div class="functions-list"><section class="detail" id="lookup_meta/1"><div class="detail-header"><a href="#lookup_meta/1" class="detail-link" data-no-tooltip="data-no-tooltip" title="Link to this function"><i class="ri-link-m" aria-hidden="true"></i><span class="sr-only">Link to this function</span></a><h1 class="signature" translate="no">lookup_meta(repo_name_or_pid)</h1><a href="https://github.com/elixir-ecto/ecto/blob/v3.12.4/lib/ecto/adapter.ex#L139" class="icon-action" rel="help" title="View Source"><i class="ri-code-s-slash-line" aria-hidden="true"></i><span class="sr-only">View Source</span></a></div><section class="docstring"><p>Returns the adapter metadata from its <a href="#c:init/1"><code class="inline">init/1</code></a> callback.</p><p>It expects a process name of a repository. The name is either
+an atom or a PID. For a given repository, you often want to
+call this function based on the repository dynamic repo:</p><pre><code class="makeup elixir" translate="no"><span class="nc">Ecto.Adapter</span><span class="o">.</span><span class="n">lookup_meta</span><span class="p" data-group-id="4933172948-1">(</span><span class="n">repo</span><span class="o">.</span><span class="n">get_dynamic_repo</span><span class="p" data-group-id="4933172948-2">(</span><span class="p" data-group-id="4933172948-2">)</span><span class="p" data-group-id="4933172948-1">)</span></code></pre></section></section></div></section><footer class="footer"><p><span class="line"><a href="https://hex.pm/packages/ecto/3.12.4" class="footer-hex-package">Hex Package</a><a href="https://preview.hex.pm/preview/ecto/3.12.4">Hex Preview</a></span><span class="line"><a href="Ecto.epub" title="ePub version">
+              Download ePub version
+            </a></span></p><p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.34.2) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a></p></footer></div></main></div><script src="https://cdn.jsdelivr.net/npm/mermaid@10.2.3/dist/mermaid.min.js"></script><script>
+  document.addEventListener("DOMContentLoaded", function () {
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: document.body.className.includes("dark") ? "dark" : "default"
+    });
+    let id = 0;
+    for (const codeEl of document.querySelectorAll("pre code.mermaid")) {
+      const preEl = codeEl.parentElement;
+      const graphDefinition = codeEl.textContent;
+      const graphEl = document.createElement("div");
+      const graphId = "mermaid-graph-" + id++;
+      mermaid.render(graphId, graphDefinition).then(({svg, bindFunctions}) => {
+        graphEl.innerHTML = svg;
+        bindFunctions?.(graphEl);
+        preEl.insertAdjacentElement("afterend", graphEl);
+        preEl.remove();
+      });
+    }
+  });
+</script></body></html>

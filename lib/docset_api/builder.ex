@@ -244,17 +244,15 @@ defmodule DocsetApi.Builder do
 
     # Deep-search for files
     files = ls_r(files_dir)
+    html_files = Enum.filter(files, &String.match?(&1, ~r"\.html"))
 
-    # TODO: This block needs some refactoring love...
-    # For each file, parse it for the right keywords and run the callback # against the result.
-    Enum.each(files, fn file ->
-      if Path.extname(file) == ".html" do
-        # Logger.debug("parse #{file}")
+    for file <- html_files do
+        Logger.debug("Parsing #{file} ...")
 
         html = Floki.parse_document!(File.read!(file))
         relative_path = Path.relative_to(file, files_dir)
 
-        # Set sidebar-closed sur le body au lieu de sidebar-opened
+        # Set `sidebar-closed` on the body instead of `sidebar-opened`.
         # Remove sidebar-button sidebar-toggle
         # Remove icon-action display-settings
         content =
@@ -291,10 +289,15 @@ defmodule DocsetApi.Builder do
           file,
           content
         )
-      else
-        Logger.debug("skip #{file}")
-      end
-    end)
+    end
+
+    skipped_files = Enum.reject(files, &Enum.member?(html_files, &1))
+
+    Logger.debug """
+    Skipped the following files:
+
+    #{Enum.each(skipped_files, &" - #{&1}")}
+    """
 
     :ok = Exqlite.Basic.close(db)
 
