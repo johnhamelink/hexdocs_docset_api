@@ -36,9 +36,9 @@ defmodule DocsetApi.Builder do
   end
 
   def build_tarball(
-         %{base_dir: base_dir, release: %{name: name, version: version}} = state,
-         dest_dir
-       ) do
+        %{base_dir: base_dir, release: %{name: name, version: version}} = state,
+        dest_dir
+      ) do
     filename = Path.join(dest_dir, "#{name}-#{version}.tgz")
     Logger.debug("Writing tarball to #{filename}")
     System.cmd("tar", ["-czvf", filename, "."], cd: base_dir)
@@ -49,13 +49,11 @@ defmodule DocsetApi.Builder do
   def copy_docset(%{base_dir: base_dir} = state, dest_dir) do
     Logger.debug("Copying #{base_dir} to #{dest_dir}")
 
-    File.cp_r(
-      base_dir,
-      Path.join([
-        dest_dir,
-        Path.basename(base_dir)
-      ])
-    )
+    {:ok, _} =
+      File.cp_r(
+        base_dir,
+        Path.join([dest_dir, Path.basename(base_dir)])
+      )
 
     state
   end
@@ -89,7 +87,7 @@ defmodule DocsetApi.Builder do
   end
 
   defp get_latest_version(name, %HTTPoison.Response{body: json, status_code: status})
-      when status != 200 do
+       when status != 200 do
     Logger.warning(~s"""
     Could not process response from hex.pm for #{name} dependency:
 
@@ -105,10 +103,21 @@ defmodule DocsetApi.Builder do
   end
 
   defp prepare_environment(name, %Release{} = release, from_path \\ nil) do
-    working_dir = Path.join([System.tmp_dir(), "hexdocs_docset", name])
-    base_dir = Path.join([working_dir, "#{name}.docset"])
-    files_dir = Path.join([base_dir, "Contents", "Resources", "Documents"])
-    docs_archive = Path.join([working_dir, "#{name}_hexdocs.tar.gz"])
+    working_dir =
+      Path.join([System.tmp_dir(), "hexdocs_docset", name])
+      |> Path.expand()
+
+    base_dir =
+      Path.join([working_dir, "#{name}.docset"])
+      |> Path.expand()
+
+    files_dir =
+      Path.join([base_dir, "Contents", "Resources", "Documents"])
+      |> Path.expand()
+
+    docs_archive =
+      Path.join([working_dir, "#{name}_hexdocs.tar.gz"])
+      |> Path.expand()
 
     Logger.debug("Create working dir #{base_dir}")
 
@@ -247,57 +256,57 @@ defmodule DocsetApi.Builder do
     html_files = Enum.filter(files, &String.match?(&1, ~r"\.html"))
 
     for file <- html_files do
-        Logger.debug("Parsing #{file} ...")
+      Logger.debug("Parsing #{file} ...")
 
-        html = Floki.parse_document!(File.read!(file))
-        relative_path = Path.relative_to(file, files_dir)
+      html = Floki.parse_document!(File.read!(file))
+      relative_path = Path.relative_to(file, files_dir)
 
-        # Set `sidebar-closed` on the body instead of `sidebar-opened`.
-        # Remove sidebar-button sidebar-toggle
-        # Remove icon-action display-settings
-        content =
-          FileParser.parse_zeal_navigation(html, relative_path, fn name, type, path ->
-            query =
-              "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('#{name}', '#{type}', '#{path}');"
+      # Set `sidebar-closed` on the body instead of `sidebar-opened`.
+      # Remove sidebar-button sidebar-toggle
+      # Remove icon-action display-settings
+      content =
+        FileParser.parse_zeal_navigation(html, relative_path, fn name, type, path ->
+          query =
+            "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('#{name}', '#{type}', '#{path}');"
 
-            {:ok, _query, _result, _db} = Exqlite.Basic.exec(db, query)
-          end)
-          |> Floki.attr("body", "class", fn
-            nil ->
-              "sidebar-closed"
+          {:ok, _query, _result, _db} = Exqlite.Basic.exec(db, query)
+        end)
+        |> Floki.attr("body", "class", fn
+          nil ->
+            "sidebar-closed"
 
-            classes ->
-              if String.contains?(classes, "sidebar-opened") do
-                String.replace(classes, "sidebar-opened", "sidebar-closed")
-              else
-                "#{classes} sidebar-closed"
-              end
-          end)
-          |> Floki.find_and_update("button", fn button ->
-            button_classes = Floki.attribute(button, "class")
-
-            if Enum.all?(button_classes, &String.starts_with?(&1, "sidebar-")) or
-                 Enum.member?(button_classes, "display-settings") do
-              :delete
+          classes ->
+            if String.contains?(classes, "sidebar-opened") do
+              String.replace(classes, "sidebar-opened", "sidebar-closed")
             else
-              button
+              "#{classes} sidebar-closed"
             end
-          end)
-          |> Floki.raw_html()
+        end)
+        |> Floki.find_and_update("button", fn button ->
+          button_classes = Floki.attribute(button, "class")
 
-        File.write(
-          file,
-          content
-        )
+          if Enum.all?(button_classes, &String.starts_with?(&1, "sidebar-")) or
+               Enum.member?(button_classes, "display-settings") do
+            :delete
+          else
+            button
+          end
+        end)
+        |> Floki.raw_html()
+
+      File.write(
+        file,
+        content
+      )
     end
 
     skipped_files = Enum.reject(files, &Enum.member?(html_files, &1))
 
-    Logger.debug """
+    Logger.debug("""
     Skipped the following files:
 
     #{Enum.each(skipped_files, &" - #{&1}")}
-    """
+    """)
 
     :ok = Exqlite.Basic.close(db)
 

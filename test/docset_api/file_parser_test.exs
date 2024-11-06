@@ -11,8 +11,6 @@ defmodule DocsetApi.FileParserTest do
   out a test suite based on a list of fixture filenames.
   """
 
-  require IEx
-  require Logger
   alias DocsetApi.FileParser
   use ExUnit.Case
 
@@ -107,6 +105,17 @@ defmodule DocsetApi.FileParserTest do
         {"Phoenix.Param", "Protocol", "Phoenix.Param.html#content"},
         {"Phoenix.Param.to_param/1", "Function", "Phoenix.Param.html#to_param/1"},
         {"Phoenix.Param.t:t/0", "Type", "Phoenix.Param.html#t:t/0"}
+      ]
+    },
+    "exdoc-0.34.0-phoenix-1.7.14--Phoenix.Socket.Transport.html" => %{
+      callbacks: [
+        {"Phoenix.Socket.Transport", "Interface", "Phoenix.Socket.Transport.html#content"},
+        {"Phoenix.Socket.Transport.check_origin/5", "Function", "Phoenix.Socket.Transport.html#check_origin/5"},
+        {"Phoenix.Socket.Transport.check_subprotocols/2", "Function", "Phoenix.Socket.Transport.html#check_subprotocols/2"},
+        {"Phoenix.Socket.Transport.code_reload/3", "Function", "Phoenix.Socket.Transport.html#code_reload/3"},
+        {"Phoenix.Socket.Transport.connect_info/3", "Function", "Phoenix.Socket.Transport.html#connect_info/3"},
+        {"Phoenix.Socket.Transport.transport_log/2", "Function", "Phoenix.Socket.Transport.html#transport_log/2"},
+        {"Phoenix.Socket.Transport.t:state/0", "Type", "Phoenix.Socket.Transport.html#t:state/0"}
       ]
     }
   }

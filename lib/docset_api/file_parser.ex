@@ -131,10 +131,11 @@ defmodule DocsetApi.FileParser do
             "page-behaviour" in class_items
         end,
         finder: fn html ->
-          Floki.find(html, "div#top-content span")
-          |> List.last()
-          |> Floki.text()
+          Floki.find(html, "title")
+          |> Floki.text
           |> String.trim()
+          |> String.split(" — ")
+          |> List.first
         end,
         content_selector: &"#{&1}#content"
       },
