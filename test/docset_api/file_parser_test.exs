@@ -13,6 +13,7 @@ defmodule DocsetApi.FileParserTest do
 
   alias DocsetApi.FileParser
   use ExUnit.Case
+  import ExUnit.CaptureLog
 
   # Used to store all the fixture filenames. At runtime this attribute
   # is processed and overwritten as a new data structure for use with the tests.
@@ -168,6 +169,11 @@ defmodule DocsetApi.FileParserTest do
                 fixture_filename: &1.fixture_filename,
                 document_filename: &1.document_filename,
                 pkg: &1.pkg,
+                doc: {
+                  # This will always be the first instance of this atom
+                  String.to_atom(&1.documenting_tool),
+                  &1.documenting_tool_version
+                },
                 specs: Map.fetch!(@specs, &1.fixture_filename)
               }
             )
@@ -197,12 +203,18 @@ defmodule DocsetApi.FileParserTest do
             |> File.read!()
             |> Floki.parse_document()
 
-          FileParser.parse(html, doc, fn name, type, path ->
-            # dbg({name, type, path})
-            # Tally the states by sending them to the `:test` process to
-            # be received and asserted against.
-            send(:test, {:called_back, name, type, path})
-          end)
+          logs =
+            capture_log(fn ->
+              FileParser.parse(html, doc, fn name, type, path ->
+                # dbg({name, type, path})
+                # Tally the states by sending them to the `:test` process to
+                # be received and asserted against.
+                send(:test, {:called_back, name, type, path})
+              end)
+            end)
+
+          # Ensure we have categorised everything
+          assert !(logs =~ "Could not categorise")
 
           for {name, type, path} <- specs[:callbacks] do
             assert_receive {:called_back, ^name, ^type, ^path}
