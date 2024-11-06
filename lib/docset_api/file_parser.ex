@@ -326,8 +326,8 @@ defmodule DocsetApi.FileParser do
     end
   end
 
-  @spec parse_zeal_navigation(Floki.html_tree(), binary(), fun()) :: Floki.html_tree()
-  def parse_zeal_navigation(html, file_path, callback) when is_function(callback) do
+  @spec parse(Floki.html_tree(), binary(), fun()) :: Floki.html_tree()
+  def parse(html, file_path, callback) when is_function(callback) do
     case parse_file_type(html, file_path, callback) do
       {namespace, _type, _file_path} -> parse_inside_file(html, namespace, file_path, callback)
       nil -> Logger.warning "Could not categorise #{file_path}. If this is surprising then consider it a bug. Moving on."

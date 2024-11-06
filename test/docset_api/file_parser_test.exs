@@ -177,7 +177,7 @@ defmodule DocsetApi.FileParserTest do
             |> File.read!()
             |> Floki.parse_document()
 
-          FileParser.parse_zeal_navigation(html, doc, fn name, type, path ->
+          FileParser.parse(html, doc, fn name, type, path ->
             # dbg({name, type, path})
             # Tally the states by sending them to the `:test` process to
             # be received and asserted against.

@@ -58,6 +58,14 @@ defmodule Mix.Tasks.HexdocsDocset.InstallDocsets do
       #{inspect(build, pretty: true)}
 
       """)
+    else
+      Mix.shell().info("""
+      The conversion failed:
+
+      #{inspect(build, pretty: true)}
+
+      """)
+
     end
   end
 

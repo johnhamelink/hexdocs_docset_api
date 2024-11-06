@@ -265,7 +265,7 @@ defmodule DocsetApi.Builder do
       # Remove sidebar-button sidebar-toggle
       # Remove icon-action display-settings
       content =
-        FileParser.parse_zeal_navigation(html, relative_path, fn name, type, path ->
+        FileParser.parse(html, relative_path, fn name, type, path ->
           query =
             "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('#{name}', '#{type}', '#{path}');"
 
