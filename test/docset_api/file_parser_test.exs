@@ -156,7 +156,8 @@ defmodule DocsetApi.FileParserTest do
     "exdoc-0.25.5-httpoison-2.2.1--HTTPoison.Base.html" => %{
       callbacks: [
         {"HTTPoison.Base", "Interface", "HTTPoison.Base.html#content"},
-        {"HTTPoison.Base.maybe_process_form/1", "Function", "HTTPoison.Base.html#maybe_process_form/1"},
+        {"HTTPoison.Base.maybe_process_form/1", "Function",
+         "HTTPoison.Base.html#maybe_process_form/1"},
         {"HTTPoison.Base.body/0", "Type", "HTTPoison.Base.html#t:body/0"},
         {"HTTPoison.Base.headers/0", "Type", "HTTPoison.Base.html#t:headers/0"},
         {"HTTPoison.Base.method/0", "Type", "HTTPoison.Base.html#t:method/0"},
@@ -235,12 +236,14 @@ defmodule DocsetApi.FileParserTest do
           registered: %{fixture: %{doc: {doc_n, doc_v}, fixture_filename: filename}}
         } do
           file_path = Path.join([File.cwd!(), "test/support/fixtures", filename])
+
           {:ok, html} =
             file_path
             |> File.read!()
             |> Floki.parse_document()
 
-          assert {doc_n, Version.parse!(doc_v)} == FileParser.identify_documenting_tool_version(html)
+          assert {doc_n, Version.parse!(doc_v)} ==
+                   FileParser.identify_documenting_tool_version(html)
         end
 
         # For each ExUnit version, build a suite of tests to
@@ -279,7 +282,6 @@ defmodule DocsetApi.FileParserTest do
             #{logs}
             """
           end
-
 
           for {name, type, path} <- specs[:callbacks] do
             assert_receive {:called_back, ^name, ^type, ^path}
