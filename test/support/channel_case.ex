@@ -19,22 +19,13 @@ defmodule DocsetApi.ChannelCase do
     quote do
       # Import conveniences for testing with channels
       use Phoenix.ChannelTest
-
-      alias DocsetApi.Repo
-      import Ecto
-      import Ecto.Changeset
-      import Ecto.Query
-
       # The default endpoint for testing
       @endpoint DocsetApi.Endpoint
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(DocsetApi.Repo)
-
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(DocsetApi.Repo, {:shared, self()})
     end
 
     :ok

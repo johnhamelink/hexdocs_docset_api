@@ -7,13 +7,4 @@ config :docset_api, DocsetApi.Endpoint,
   server: false
 
 # Print only warnings and errors during test
-config :logger, level: :warn
-
-# Configure your database
-config :docset_api, DocsetApi.Repo,
-  adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
-  database: "docset_api_test",
-  hostname: "localhost",
-  pool: Ecto.Adapters.SQL.Sandbox
+config :logger, level: :warning

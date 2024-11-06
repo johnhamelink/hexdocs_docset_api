@@ -19,12 +19,6 @@ defmodule DocsetApi.ConnCase do
     quote do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
-
-      alias DocsetApi.Repo
-      import Ecto
-      import Ecto.Changeset
-      import Ecto.Query
-
       import DocsetApi.Router.Helpers
 
       # The default endpoint for testing
@@ -33,10 +27,7 @@ defmodule DocsetApi.ConnCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(DocsetApi.Repo)
-
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(DocsetApi.Repo, {:shared, self()})
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
