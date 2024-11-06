@@ -179,7 +179,7 @@ defmodule DocsetApi.FileParserTest do
             )
 
   for {doc, fixtures} <- @fixtures do
-    describe "[#{doc}]" do
+    describe "fixture: [#{String.replace(doc, "-", " ")}]" do
       for %{document_filename: filename, pkg: {pkg, pkg_version}} = fixture <- fixtures do
         # While filename is in scope when the first argument of the
         # test call is being interpolated, this is not the case for
@@ -189,7 +189,24 @@ defmodule DocsetApi.FileParserTest do
         # which adds it to the test context.
         @fixture fixture
 
-        test "[#{pkg}-#{pkg_version}] -> Testing #{filename} fixture", %{
+        # For each ExUnit version, build a test to ensure that it can be
+        # identified correctly.
+        test "[#{pkg} #{pkg_version}] [ID] " <> filename, %{
+          registered: %{fixture: %{doc: doc, fixture_filename: filename}}
+        } do
+          file_path = Path.join([File.cwd!(), "test/support/fixtures", filename])
+
+          {:ok, html} =
+            file_path
+            |> File.read!()
+            |> Floki.parse_document()
+
+          assert doc == FileParser.identify_documenting_tool_version(html)
+        end
+
+        # For each ExUnit version, build a suite of tests to
+        # ensure indexing can be done correctly.
+        test "[#{pkg} #{pkg_version}] [INDEX] " <> filename, %{
           registered: %{
             fixture: %{specs: specs, fixture_filename: filename, document_filename: doc}
           }
