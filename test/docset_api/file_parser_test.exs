@@ -117,6 +117,13 @@ defmodule DocsetApi.FileParserTest do
         {"Phoenix.Socket.Transport.transport_log/2", "Function", "Phoenix.Socket.Transport.html#transport_log/2"},
         {"Phoenix.Socket.Transport.t:state/0", "Type", "Phoenix.Socket.Transport.html#t:state/0"}
       ]
+    },
+    "exdoc-0.28.6-jason-1.5.0.alpha2--Jason.EncodeError.html" => %{
+      callbacks: [
+        {"Jason.EncodeError", "Exception", "Jason.EncodeError.html#content"},
+        {"Jason.EncodeError.new/1", "Function", "Jason.EncodeError.html#new/1"},
+        {"Jason.EncodeError.t:t/0", "Type", "Jason.EncodeError.html#t:t/0"}
+      ]
     }
   }
 

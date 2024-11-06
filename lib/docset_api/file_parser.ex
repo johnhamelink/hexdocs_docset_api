@@ -46,10 +46,11 @@ defmodule DocsetApi.FileParser do
             "page-exception" in class_items
         end,
         finder: fn html ->
-          Floki.find(html, "div#top-content span")
-          |> Enum.at(1)
-          |> Floki.text()
+          Floki.find(html, "title")
+          |> Floki.text
           |> String.trim()
+          |> String.split(" — ")
+          |> List.first
         end,
         content_selector: &"#{&1}#content"
       },
