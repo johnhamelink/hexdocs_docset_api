@@ -247,13 +247,13 @@ defmodule DocsetApi.FileParser do
 
         # The unique identifier for the function we are recording. It
         # should contain the entire namespace.
-        name: &"#{&1}.#{&2}",
+        name: &"#{&1}." <> String.replace_prefix(&2, "t:", ""),
 
         # A function which will find function IDs on the html tree
         finder: &Floki.attribute(Floki.find(&1, ".types-list .detail"), "id"),
 
         # The relative path to the content to navigate to
-        content_selector: &"#{&1}##{&2}"
+        content_selector: &"#{&1}#" <> String.replace_prefix(&2, "t:", "")
       }
 
       # Union
