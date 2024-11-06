@@ -4,10 +4,10 @@ defmodule DocsetApi.FileParser do
 
   def whole_file_finder(html) do
     Floki.find(html, "title")
-    |> Floki.text
+    |> Floki.text()
     |> String.trim()
     |> String.split(" — ")
-    |> List.first
+    |> List.first()
   end
 
   def parsers do
@@ -95,14 +95,14 @@ defmodule DocsetApi.FileParser do
           class_items =
             Floki.attribute(body_tag, "class")
             |> Enum.flat_map(&String.split(&1, " "))
-            |> MapSet.new
+            |> MapSet.new()
 
           class_intersection =
             MapSet.new(["page-extra", "page-cheatmd"])
             |> MapSet.intersection(class_items)
 
-          "extras" in Floki.attribute(body_tag, "data-type")
-                             and MapSet.size(class_intersection) > 0
+          "extras" in Floki.attribute(body_tag, "data-type") and
+            MapSet.size(class_intersection) > 0
         end,
         finder: &whole_file_finder/1,
         content_selector: &"#{&1}#content"
@@ -221,7 +221,7 @@ defmodule DocsetApi.FileParser do
 
         # The unique identifier for the function we are recording. It
         # should contain the entire namespace.
-        name: &"#{&1}." <> String.replace_prefix(&2, "t:", ""),
+        name: &("#{&1}." <> String.replace_prefix(&2, "t:", "")),
 
         # A function which will find function IDs on the html tree
         finder: &Floki.attribute(Floki.find(&1, ".types-list .detail"), "id"),
@@ -304,11 +304,40 @@ defmodule DocsetApi.FileParser do
   @spec parse(Floki.html_tree(), binary(), fun()) :: Floki.html_tree()
   def parse(html, file_path, callback) when is_function(callback) do
     case parse_file_type(html, file_path, callback) do
-      {namespace, _type, _file_path} -> parse_inside_file(html, namespace, file_path, callback)
-      nil -> Logger.warning "Could not categorise #{file_path}. If this is surprising then consider it a bug. Moving on."
-      other -> Logger.warning "Could not categorise response #{inspect other}. This is a bug."
+      {namespace, _type, _file_path} ->
+        parse_inside_file(html, namespace, file_path, callback)
+
+      nil ->
+        Logger.warning(
+          "Could not categorise #{file_path}. If this is surprising then consider it a bug. Moving on."
+        )
+
+      other ->
+        Logger.warning("Could not categorise response #{inspect(other)}. This is a bug.")
     end
 
     html
+  end
+
+  @spec identify_documenting_tool_version(Floki.html_tree()) :: {atom(), binary()}
+  def identify_documenting_tool_version(html) do
+    # Try various different
+    Enum.find_value(
+      [
+        fn -> identify_check_for(:exdoc, html) end
+      ],
+      fn x -> x.() end
+    )
+  end
+
+  def identify_check_for(:exdoc, html) do
+    ["ExDoc", version] =
+      Floki.find(html, "meta[name=\"generator\"]")
+      |> Floki.attribute("content")
+      |> Floki.text()
+      |> String.trim()
+      |> String.split(" v")
+
+    {:exdoc, version}
   end
 end
