@@ -29,7 +29,7 @@ defmodule DocsetApi.FileParserTest do
     # that the docset spec provides.
     #
     # TODO: See about proposing behaviours to be added to the spec.
-    "exdoc-0.34.0-ecto-3.12.4--Ecto.Adapter.html" => %{
+    "exdoc-0.34.2-ecto-3.12.4--Ecto.Adapter.html" => %{
       callbacks: [
         {"Ecto.Adapter", "Interface", "Ecto.Adapter.html#content"},
         {"Ecto.Adapter.lookup_meta/1", "Function", "Ecto.Adapter.html#lookup_meta/1"},
@@ -37,7 +37,7 @@ defmodule DocsetApi.FileParserTest do
         {"Ecto.Adapter.t/0", "Type", "Ecto.Adapter.html#t:t/0"}
       ]
     },
-    "exdoc-0.34.0-ecto-3.12.4--Ecto.Query.API.html" => %{
+    "exdoc-0.34.2-ecto-3.12.4--Ecto.Query.API.html" => %{
       callbacks: [
         {"Ecto.Query.API", "Module", "Ecto.Query.API.html#content"},
         {"Ecto.Query.API.avg/1", "Function", "Ecto.Query.API.html#avg/1"},
@@ -90,14 +90,14 @@ defmodule DocsetApi.FileParserTest do
         {"Ecto.Query.API.values/2", "Function", "Ecto.Query.API.html#values/2"}
       ]
     },
-    "exdoc-0.34.0-ecto-3.12.4--getting-started.html" => %{
+    "exdoc-0.34.2-ecto-3.12.4--getting-started.html" => %{
       callbacks: [{"Getting Started", "Guide", "getting-started.html#content"}]
     },
-    "exdoc-0.34.0-ecto-3.12.4--Ecto.QueryError.html" => %{
+    "exdoc-0.34.2-ecto-3.12.4--Ecto.QueryError.html" => %{
       callbacks: [{"Ecto.QueryError", "Exception", "Ecto.QueryError.html#content"}]
     },
     # This is not a guide, but a "cheatsheet", which we put in the guide category.
-    "exdoc-0.34.0-ecto-3.12.4--crud.html" => %{
+    "exdoc-0.34.2-ecto-3.12.4--crud.html" => %{
       callbacks: [{"Basic CRUD", "Guide", "crud.html#content"}]
     },
     "exdoc-0.34.0-phoenix-1.7.14--Phoenix.Param.html" => %{
@@ -110,11 +110,16 @@ defmodule DocsetApi.FileParserTest do
     "exdoc-0.34.0-phoenix-1.7.14--Phoenix.Socket.Transport.html" => %{
       callbacks: [
         {"Phoenix.Socket.Transport", "Interface", "Phoenix.Socket.Transport.html#content"},
-        {"Phoenix.Socket.Transport.check_origin/5", "Function", "Phoenix.Socket.Transport.html#check_origin/5"},
-        {"Phoenix.Socket.Transport.check_subprotocols/2", "Function", "Phoenix.Socket.Transport.html#check_subprotocols/2"},
-        {"Phoenix.Socket.Transport.code_reload/3", "Function", "Phoenix.Socket.Transport.html#code_reload/3"},
-        {"Phoenix.Socket.Transport.connect_info/3", "Function", "Phoenix.Socket.Transport.html#connect_info/3"},
-        {"Phoenix.Socket.Transport.transport_log/2", "Function", "Phoenix.Socket.Transport.html#transport_log/2"},
+        {"Phoenix.Socket.Transport.check_origin/5", "Function",
+         "Phoenix.Socket.Transport.html#check_origin/5"},
+        {"Phoenix.Socket.Transport.check_subprotocols/2", "Function",
+         "Phoenix.Socket.Transport.html#check_subprotocols/2"},
+        {"Phoenix.Socket.Transport.code_reload/3", "Function",
+         "Phoenix.Socket.Transport.html#code_reload/3"},
+        {"Phoenix.Socket.Transport.connect_info/3", "Function",
+         "Phoenix.Socket.Transport.html#connect_info/3"},
+        {"Phoenix.Socket.Transport.transport_log/2", "Function",
+         "Phoenix.Socket.Transport.html#transport_log/2"},
         {"Phoenix.Socket.Transport.state/0", "Type", "Phoenix.Socket.Transport.html#t:state/0"}
       ]
     },
