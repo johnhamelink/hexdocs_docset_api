@@ -8,7 +8,15 @@ defmodule DocsetApi.FileParser do
      "index.html"
    ]
 
-  defp whole_file_finder(html) do
+  defp whole_file_finder({:exdoc, %Version{major: 0, minor: 11, patch: _}}, html) do
+    Floki.find(html, "title")
+    |> Floki.text()
+    |> String.trim()
+    |> String.split(" – ")
+    |> List.first()
+  end
+
+  defp whole_file_finder({:exdoc, _}, html) do
     Floki.find(html, "title")
     |> Floki.text()
     |> String.trim()
@@ -16,7 +24,7 @@ defmodule DocsetApi.FileParser do
     |> List.first()
   end
 
-  defp exdoc_25_is_type?(html, expected) do
+  defp is_type?({:exdoc, %Version{major: 0, minor: min, patch: _}}, html, expected) when min >= 11 and min <= 25 do
     body_tag = Floki.find(html, "body")
 
     module_type =
@@ -34,7 +42,7 @@ defmodule DocsetApi.FileParser do
     end
   end
 
-  defp exdoc_is_type?(html, expected) do
+  defp is_type?({:exdoc, _version}, html, expected) do
     body_tag = Floki.find(html, "body")
 
     class_items =
@@ -106,16 +114,9 @@ defmodule DocsetApi.FileParser do
         type: :whole_file,
         # Determines whether the file in question is of
         # type "exception" or not.
-        is_type?: fn
-          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m > 25 ->
-            &exdoc_is_type?(&1, "exception")
-          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m <= 25 and m >= 23 ->
-            &exdoc_25_is_type?(&1, "exception")
-        end,
+        is_type?: fn doc -> &is_type?(doc, &1, "exception") end,
         # What is the ID of this thing?
-        id: fn
-          {:exdoc, _version} -> &whole_file_finder(&1)
-        end,
+        id: fn doc -> &(whole_file_finder(doc, &1)) end,
         # Where is the content we wish to keep?
         path: fn
           {:exdoc, _version} -> &"#{&1}#content"
@@ -155,16 +156,14 @@ defmodule DocsetApi.FileParser do
               "extras" in Floki.attribute(body_tag, "data-type") and
                 MapSet.size(class_intersection) > 0
             end
-          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m <= 25 and m >= 23 ->
+          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m <= 25 -> # and m >= 23 ->
             fn html ->
               # FIXME: Is this specific enough?
               body_tag = Floki.find(html, "body")
               "extras" in Floki.attribute(body_tag, "data-type")
             end
         end,
-        id: fn
-          {:exdoc, _} -> &whole_file_finder/1
-        end,
+        id: fn doc -> &(whole_file_finder(doc, &1)) end,
         path: fn
           {:exdoc, _} -> &"#{&1}#content"
         end
@@ -175,31 +174,34 @@ defmodule DocsetApi.FileParser do
       # added later.
       "Interface" => %{
         type: :whole_file,
-        is_type?: fn
-          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m > 25 ->
-            &exdoc_is_type?(&1, "behaviour")
-          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m <= 25 and m >= 23 ->
-            &exdoc_25_is_type?(&1, "behaviour")
-        end,
-        id: fn
-          {:exdoc, _} -> &whole_file_finder/1
-        end,
+        is_type?: fn doc -> &is_type?(doc, &1, "behaviour") end,
+        id: fn doc -> &(whole_file_finder(doc, &1)) end,
         path: fn
           {:exdoc, _} -> &"#{&1}#content"
         end
       },
 
+      "Macro" => %{
+        type: :inline,
+
+        # The unique identifier for the function we are recording. It
+        # should contain the entire namespace.
+        name: fn
+          {:exdoc, _} -> &"#{&1}.#{&2}"
+        end,
+
+        # A function which will find function IDs on the html tree (it includes arity)
+        id: fn {:exdoc, _} -> &Floki.attribute(Floki.find(&1, "#macros .detail"), "id") end,
+
+        # The relative path to the content to navigate to
+        path: fn {:exdoc, _} -> &"#{&1}##{&2}" end
+      },
+
+
       "Module" => %{
         type: :whole_file,
-        is_type?: fn
-          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m > 25 ->
-            &exdoc_is_type?(&1, "module")
-          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m <= 25 and m >= 23 ->
-            &exdoc_25_is_type?(&1, "module")
-        end,
-        id: fn
-          {:exdoc, _} -> &whole_file_finder/1
-        end,
+        is_type?: fn doc -> &is_type?(doc, &1, "module") end,
+        id: fn doc -> &(whole_file_finder(doc, &1)) end,
         path: fn
           {:exdoc, _} -> &"#{&1}#content"
         end
@@ -209,15 +211,8 @@ defmodule DocsetApi.FileParser do
       #        available
       "Procedure" => %{
         type: :whole_file,
-        is_type?: fn
-          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m > 25 ->
-            &exdoc_is_type?(&1, "task")
-          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m <= 25 and m >= 23 ->
-            &exdoc_25_is_type?(&1, "task")
-        end,
-        id: fn
-          {:exdoc, _} -> &whole_file_finder/1
-        end,
+        is_type?: fn doc -> &is_type?(doc, &1, "task") end,
+        id: fn doc -> &(whole_file_finder(doc, &1)) end,
         path: fn
           {:exdoc, _} -> &"#{&1}#content"
         end
@@ -225,15 +220,8 @@ defmodule DocsetApi.FileParser do
 
       "Protocol" => %{
         type: :whole_file,
-        is_type?: fn
-          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m > 25 ->
-            &exdoc_is_type?(&1, "protocol")
-          {:exdoc, %Version{major: 0, minor: m, patch: _}} when m <= 25 and m >= 23 ->
-            &exdoc_25_is_type?(&1, "protocol")
-        end,
-        id: fn
-          {:exdoc, _} -> &whole_file_finder/1
-        end,
+        is_type?: fn doc -> &is_type?(doc, &1, "protocol") end,
+        id: fn doc -> &(whole_file_finder(doc, &1)) end,
         path: fn
           {:exdoc, _} -> &"#{&1}#content"
         end
@@ -309,6 +297,10 @@ defmodule DocsetApi.FileParser do
       is_type? = parser.is_type?.(doc)
       id = parser.id.(doc)
       path = parser.path.(doc)
+
+      if path.(file_path) =~ "Guardsafe" do
+        require IEx; IEx.pry
+      end
 
       if is_type?.(html) do
         name = id.(html)

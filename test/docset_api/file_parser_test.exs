@@ -267,6 +267,34 @@ defmodule DocsetApi.FileParserTest do
     "exdoc-0.25.5-httpoison-2.2.1--404.html" => %{
       # We expect 404 to be skipped because it's a "banned file"
       callbacks: []
+    },
+    "exdoc-0.11.3-guardsafe-0.5.1--Guardsafe.html" => %{
+      callbacks: [
+        {"Guardsafe", "Module", "Guardsafe.html#content"},
+        {"Guardsafe.atom?/1", "Macro", "Guardsafe.html#atom?/1"},
+        {"Guardsafe.binary?/1", "Macro", "Guardsafe.html#binary?/1"},
+        {"Guardsafe.bitstring?/1", "Macro", "Guardsafe.html#bitstring?/1"},
+        {"Guardsafe.boolean?/1", "Macro", "Guardsafe.html#boolean?/1"},
+        {"Guardsafe.date?/1", "Macro", "Guardsafe.html#date?/1"},
+        {"Guardsafe.datetime?/1", "Macro", "Guardsafe.html#datetime?/1"},
+        {"Guardsafe.divisible_by?/2", "Macro", "Guardsafe.html#divisible_by?/2"},
+        {"Guardsafe.even?/1", "Macro", "Guardsafe.html#even?/1"},
+        {"Guardsafe.float?/1", "Macro", "Guardsafe.html#float?/1"},
+        {"Guardsafe.function?/1", "Macro", "Guardsafe.html#function?/1"},
+        {"Guardsafe.function?/2", "Macro", "Guardsafe.html#function?/2"},
+        {"Guardsafe.integer?/1", "Macro", "Guardsafe.html#integer?/1"},
+        {"Guardsafe.list?/1", "Macro", "Guardsafe.html#list?/1"},
+        {"Guardsafe.map?/1", "Macro", "Guardsafe.html#map?/1"},
+        {"Guardsafe.nil?/1", "Macro", "Guardsafe.html#nil?/1"},
+        {"Guardsafe.number?/1", "Macro", "Guardsafe.html#number?/1"},
+        {"Guardsafe.odd?/1", "Macro", "Guardsafe.html#odd?/1"},
+        {"Guardsafe.pid?/1", "Macro", "Guardsafe.html#pid?/1"},
+        {"Guardsafe.port?/1", "Macro", "Guardsafe.html#port?/1"},
+        {"Guardsafe.reference?/1", "Macro", "Guardsafe.html#reference?/1"},
+        {"Guardsafe.time?/1", "Macro", "Guardsafe.html#time?/1"},
+        {"Guardsafe.tuple?/1", "Macro", "Guardsafe.html#tuple?/1"},
+        {"Guardsafe.within?/3", "Macro", "Guardsafe.html#within?/3"}
+      ]
     }
   }
 
