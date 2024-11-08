@@ -82,6 +82,26 @@ defmodule DocsetApi.FileParser do
   def parsers do
 
     %{
+      "Callback" => %{
+        type: :inline,
+
+        # The unique identifier for the function we are recording. It
+        # should contain the entire namespace.
+        name: fn
+          {:exdoc, _} -> &("#{&1}." <> String.replace_prefix(&2, "c:", ""))
+        end,
+
+        # A function which will find function IDs on the html tree
+        id: fn
+          {:exdoc, _} ->  &Floki.attribute(Floki.find(&1, ".callbacks-list .detail"), "id")
+        end,
+
+        # The relative path to the content to navigate to
+        path: fn
+          {:exdoc, _} -> &"#{&1}##{&2}"
+        end
+      },
+
       "Exception" => %{
         type: :whole_file,
         # Determines whether the file in question is of
