@@ -16,7 +16,7 @@ defmodule Mix.Tasks.HexdocsDocset.InstallDocsets do
 
     # generate a docset for this codebase
     # TODO: Handle version requirements
-    build = DocsetApi.Builder.build(package)
+    {:ok, build} = DocsetApi.Builder.build(package)
 
     # Detect if optional flags are present
     copy_to_index = Enum.find_index(args, fn x -> x == "--copy-to" end)
@@ -37,7 +37,7 @@ defmodule Mix.Tasks.HexdocsDocset.InstallDocsets do
     end
 
     if build_ok? do
-      build =
+      {:ok, build} =
         cond do
           compress? and copy_to_index ->
             DocsetApi.Builder.build_tarball(build, copy_to.())

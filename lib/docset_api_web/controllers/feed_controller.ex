@@ -3,7 +3,7 @@ defmodule DocsetApi.FeedController do
   alias DocsetApi.BuilderServer
 
   def show(conn, %{"package_name" => package}) do
-    with entry when is_map(entry) <- BuilderServer.fetch_package(package) do
+    with {:ok, entry} when is_map(entry) <- BuilderServer.fetch_package(package) do
       render(conn, "show.xml", entry: entry)
     else
       {:error, _docset, :hexpm_not_found} ->

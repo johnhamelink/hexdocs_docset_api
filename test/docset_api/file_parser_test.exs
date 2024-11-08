@@ -342,7 +342,7 @@ defmodule DocsetApi.FileParserTest do
         # test call is being interpolated, this is not the case for
         # inside the block.
         #
-        # Intead, we set the fixture to the @fixture module attribute,
+        # Instead, we set the fixture to the @fixture module attribute,
         # which adds it to the test context.
         @fixture fixture
 

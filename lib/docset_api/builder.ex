@@ -41,7 +41,7 @@ defmodule DocsetApi.Builder do
     Logger.debug("Writing tarball to #{filename}")
     System.cmd("tar", ["-czvf", filename, "."], cd: base_dir)
 
-    state
+    {:ok, state}
   end
 
   def copy_docset(%{base_dir: base_dir} = state, dest_dir) do
@@ -53,7 +53,7 @@ defmodule DocsetApi.Builder do
         Path.join([dest_dir, Path.basename(base_dir)])
       )
 
-    state
+    {:ok, state}
   end
 
   defp return_error(%HTTPoison.Error{reason: reason}) do
