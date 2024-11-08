@@ -247,7 +247,7 @@ defmodule DocsetApi.FileParserTest do
             |> Floki.parse_document()
 
           assert {doc_n, Version.parse!(doc_v)} ==
-                   FileParser.identify_documenting_tool_version(html)
+                   FileParser.identify_documenting_tool_version(html, file_path)
         end
 
         # For each ExUnit version, build a suite of tests to

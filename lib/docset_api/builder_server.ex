@@ -44,9 +44,22 @@ defmodule DocsetApi.BuilderServer do
   end
 
   def handle_call({:build_package, pkg_name}, _from, packages) do
-    docset = Builder.build(pkg_name)
-    pkg = Builder.build_tarball(docset, docset[:working_dir])
-    {:reply, pkg, Map.put(packages, pkg_name, pkg)}
+    with {:ok, docset} <- Builder.build(pkg_name),
+         pkg <- Builder.build_tarball(docset, docset[:working_dir]) do
+      {:reply, pkg, Map.put(packages, pkg_name, pkg)}
+    else
+      {:error, docset, :hexpm_not_found} = err ->
+        Logger.error """
+        Could not build package "#{docset}":
+        Hexdocs.pm returned 404 for this libary. Is it spelt
+        correctly?
+        """
+        {:reply, err, packages}
+      {:error, docset, unknown} ->
+        raise "[#{docset}] An unknown error occurred: #{inspect unknown}"
+      wtf ->
+        raise "Failed to recognise response from builder: #{inspect wtf}"
+    end
   end
 
   def handle_call({:get_cached, pkg}, _from, packages) do

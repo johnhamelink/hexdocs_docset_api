@@ -11,9 +11,8 @@ defmodule DocsetApi.Builder do
          {:ok, state} <- prepare_environment(name, release),
          {:ok, state} <- download_and_extract_docs(state),
          {:ok, state} <- build_plist(state),
-         {:ok, state} <- copy_logo(state),
-         {:ok, state} <- build_index(state) do
-      state
+         {:ok, state} <- copy_logo(state) do
+      build_index(state)
     else
       {:error, msg} -> {:error, name, msg}
     end
@@ -29,9 +28,8 @@ defmodule DocsetApi.Builder do
 
     with {:ok, state} <- prepare_environment(name, state, from_path),
          {:ok, state} <- copy_docs(state),
-         {:ok, state} <- build_plist(state),
-         {:ok, state} <- build_index(state) do
-      state
+         {:ok, state} <- build_plist(state) do
+      build_index(state)
     end
   end
 

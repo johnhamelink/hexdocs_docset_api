@@ -4,7 +4,8 @@ defmodule DocsetApi.FileParser do
 
   @banned_files [
      "404.html",
-     "search.html"
+     "search.html",
+     "index.html"
    ]
 
   defp whole_file_finder(html) do
@@ -44,15 +45,25 @@ defmodule DocsetApi.FileParser do
       "page-#{expected}" in class_items
   end
 
-  def identify_check_for(:exdoc, html) do
-    ["ExDoc", version] =
-      Floki.find(html, "meta[name=\"generator\"]")
-      |> Floki.attribute("content")
-      |> Floki.text()
-      |> String.trim()
-      |> String.split(" v")
-
-    {:exdoc, Version.parse!(version)}
+  # TODO: It'd also be really cool if this could be extended through a
+  #       plugin system...
+  def identify_check_for(:exdoc, html, file_path) do
+    Floki.find(html, "meta[name=\"generator\"]")
+    |> Floki.attribute("content")
+    |> Floki.text()
+    |> String.trim()
+    |> String.split(" v")
+    |> case do
+      ["ExDoc", version] -> {:exdoc, Version.parse!(version)}
+      [""] ->
+        # TODO: It'd be nice to drop down to some sort of basic
+        #       behaviour to allow the docset to at least be
+        #       built. Maybe use the Entry type to just store all of
+        #       the pages.
+        #
+        Logger.error "Could not detect documentation tooling library for #{file_path}."
+        nil
+    end
   end
 
   # Other available types to chose from:
@@ -230,12 +241,12 @@ defmodule DocsetApi.FileParser do
     }
   end
 
-  @spec identify_documenting_tool_version(Floki.html_tree()) :: {atom(), binary()}
-  def identify_documenting_tool_version(html) do
+  @spec identify_documenting_tool_version(Floki.html_tree(), binary()) :: {atom(), binary()}
+  def identify_documenting_tool_version(html, file_path) do
     # Try various different
     Enum.find_value(
       [
-        fn -> identify_check_for(:exdoc, html) end
+        fn -> identify_check_for(:exdoc, html, file_path) end
       ],
       fn x -> x.() end
     )
@@ -273,7 +284,7 @@ defmodule DocsetApi.FileParser do
     # remind me where to adjust this if necessary.
     |> Enum.find_value(fn {type, parser} ->
       Logger.debug("Checking if file is of type #{type}")
-      # if file_path == "crud.html", do: IEx.pry()
+      if file_path == "js/index.html", do: IEx.pry()
 
       is_type? = parser.is_type?.(doc)
       id = parser.id.(doc)
@@ -332,7 +343,7 @@ defmodule DocsetApi.FileParser do
 
   @spec parse(Floki.html_tree(), binary(), fun()) :: Floki.html_tree()
   def parse(html, file_path, callback) when is_function(callback) do
-    doc = identify_documenting_tool_version(html)
+    doc = identify_documenting_tool_version(html, file_path)
 
     if file_path not in @banned_files do
       case parse_file_type(html, doc, file_path, callback) do
